@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Assignment Review | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><p class="headline font-black text-xl text-white">Instructor Portal</p><p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">CyberEdge Academy</p></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/instructor/dashboard.html"     class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/instructor/my-courses.html"    class="sl"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+    <a href="/instructor/students.html"      class="sl"><span class="material-symbols-outlined">people</span>Students</a>
+    <a href="/instructor/assignments.html"   class="sl active"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+    <a href="/instructor/attendance.html"    class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/instructor/sessions.html"      class="sl"><span class="material-symbols-outlined">video_call</span>Sessions</a>
+    <a href="/instructor/announcements.html" class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4">
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="flex-1 p-8">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="headline text-3xl font-bold text-[#0A2540]">Assignment Review</h1>
+      <p class="text-slate-400 mt-1">Grade student submissions and give feedback.</p>
+    </div>
+    <button onclick="openCreateModal()" class="sig-grad text-white font-bold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">add</span> New Assignment
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-6">
+    <button data-tab="pending"  onclick="switchTab('pending')"  class="tab-btn active-tab px-5 py-2.5 rounded-full text-sm font-bold bg-[#0A2540] text-white">Pending Review</button>
+    <button data-tab="graded"   onclick="switchTab('graded')"   class="tab-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Graded</button>
+    <button data-tab="assignments" onclick="switchTab('assignments')" class="tab-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">All Assignments</button>
+  </div>
+
+  <div id="content-area">
+    <p class="text-slate-400 text-center py-10">Loading...</p>
+  </div>
+</main>
+</div>
+
+<!-- GRADE MODAL -->
+<div id="grade-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+  <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="headline text-xl font-bold text-[#0A2540]">Grade Submission</h2>
+      <button onclick="closeModal('grade-modal')" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="font-bold text-[#0A2540] mb-1" id="gm-student">Student</p>
+    <p class="text-slate-500 text-sm mb-6" id="gm-assignment">Assignment</p>
+    <div class="mb-4">
+      <label class="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">Grade (out of <span id="gm-max">100</span>)</label>
+      <input id="gm-grade" type="number" min="0" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]" placeholder="e.g. 85"/>
+    </div>
+    <div class="mb-6">
+      <label class="text-xs font-bold uppercase tracking-widest text-slate-500 block mb-2">Feedback (optional)</label>
+      <textarea id="gm-feedback" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:outline-none focus:border-[#007BFF]" placeholder="Great work on..."></textarea>
+    </div>
+    <p id="gm-err" class="text-red-500 text-sm hidden mb-3"></p>
+    <div class="flex gap-3">
+      <button onclick="closeModal('grade-modal')" class="flex-1 border border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50">Cancel</button>
+      <button onclick="submitGrade()" class="flex-1 sig-grad text-white font-bold py-3 rounded-xl" id="gm-btn">Save Grade</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE ASSIGNMENT MODAL -->
+<div id="create-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+  <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="headline text-xl font-bold text-[#0A2540]">Create Assignment</h2>
+      <button onclick="closeModal('create-modal')" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Title *</label>
+        <input id="ca-title" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Description</label>
+        <textarea id="ca-desc" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:outline-none focus:border-[#007BFF]"></textarea>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Course *</label>
+        <select id="ca-course" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]">
+          <option value="">Select course</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Due Date</label>
+          <input id="ca-due" type="datetime-local" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Max Points</label>
+          <input id="ca-points" type="number" value="100" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+      </div>
+    </div>
+    <p id="ca-err" class="text-red-500 text-sm hidden mt-3"></p>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal('create-modal')" class="flex-1 border border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50">Cancel</button>
+      <button onclick="createAssignment()" class="flex-1 sig-grad text-white font-bold py-3 rounded-xl">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let currentUser, currentProfile, gradeSubId, currentTab = 'pending';
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = type==='success'?'#00C896':'#ef4444';
+  t.style.opacity = '1'; setTimeout(()=>{t.style.opacity='0';}, 3000);
+}
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+async function init() {
+  const auth = await requireRole(['admin','instructor'], '/student/dashboard.html');
+  if (!auth) return;
+  currentUser = auth.user; currentProfile = auth.profile;
+  // Populate course dropdown
+  const { data: courses } = await sb.from('courses').select('id,title').order('title');
+  const sel = document.getElementById('ca-course');
+  (courses||[]).forEach(c => { const o = document.createElement('option'); o.value=c.id; o.textContent=c.title; sel.appendChild(o); });
+  switchTab('pending');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('bg-[#0A2540]','text-white');
+    b.classList.add('bg-white','border','border-slate-200','text-slate-600');
+  });
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('bg-[#0A2540]','text-white');
+  document.querySelector(`[data-tab="${tab}"]`).classList.remove('bg-white','border','border-slate-200','text-slate-600');
+  if (tab === 'assignments') loadAssignments();
+  else loadSubmissions(tab === 'pending');
+}
+
+async function loadSubmissions(pendingOnly) {
+  const area = document.getElementById('content-area');
+  area.innerHTML = '<p class="text-slate-400 text-center py-10">Loading...</p>';
+  let q = sb.from('submissions').select('*, assignments(title,max_points,courses(title)), profiles!student_id(full_name,email)').order('submitted_at',{ascending:false}).limit(50);
+  if (pendingOnly) q = q.is('grade', null);
+  else q = q.not('grade', 'is', null);
+  const { data } = await q;
+  if (!data?.length) { area.innerHTML = `<p class="text-slate-400 text-center py-16">${pendingOnly?'No pending submissions — great!':'No graded submissions yet.'}</p>`; return; }
+  area.innerHTML = `<div class="space-y-4">${data.map(s=>`
+    <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex items-start justify-between gap-4">
+      <div class="flex items-start gap-4 flex-1">
+        <div class="w-12 h-12 sig-grad rounded-xl flex items-center justify-center text-white font-bold headline flex-shrink-0">
+          ${(s.profiles?.full_name||s.profiles?.email||'?')[0].toUpperCase()}
+        </div>
+        <div>
+          <p class="font-bold text-[#0A2540]">${s.profiles?.full_name||s.profiles?.email||'-'}</p>
+          <p class="text-sm text-[#007BFF] font-bold">${s.assignments?.title||'-'} · ${s.assignments?.courses?.title||''}</p>
+          <p class="text-xs text-slate-400 mt-1">Submitted: ${new Date(s.submitted_at).toLocaleString()}</p>
+          ${s.grade!=null?`<p class="text-xs text-[#009e76] font-bold mt-1">Grade: ${s.grade}/${s.assignments?.max_points||100}</p>`:''}
+          ${s.feedback?`<p class="text-xs text-slate-500 mt-1">Feedback: ${s.feedback}</p>`:''}
+        </div>
+      </div>
+      <div class="flex gap-2 flex-shrink-0">
+        ${s.file_url?`<a href="#" onclick="alert('File download: ${s.file_url}')" class="border border-slate-200 text-slate-600 font-bold px-4 py-2 rounded-xl text-sm">View File</a>`:''}
+        <button onclick="openGradeModal('${s.id}','${(s.profiles?.full_name||s.profiles?.email||'Student').replace(/'/g,"\\'")}','${(s.assignments?.title||'').replace(/'/g,"\\'")}',${s.assignments?.max_points||100})"
+          class="${s.grade!=null?'bg-[#eff4ff] text-[#007BFF]':'sig-grad text-white'} font-bold px-4 py-2 rounded-xl text-sm">
+          ${s.grade!=null?'Re-grade':'Grade'}
+        </button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+async function loadAssignments() {
+  const area = document.getElementById('content-area');
+  area.innerHTML = '<p class="text-slate-400 text-center py-10">Loading...</p>';
+  const { data } = await sb.from('assignments').select('*, courses(title)').order('created_at',{ascending:false});
+  if (!data?.length) { area.innerHTML = `<p class="text-slate-400 text-center py-16">No assignments yet. Create one!</p>`; return; }
+  area.innerHTML = `<div class="bg-white rounded-2xl border border-slate-100 overflow-hidden"><table class="w-full text-sm"><thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 text-left"><tr><th class="p-4">Title</th><th class="p-4">Course</th><th class="p-4">Due</th><th class="p-4">Max Pts</th><th class="p-4">Actions</th></tr></thead><tbody>${data.map(a=>`<tr class="border-t border-slate-100 hover:bg-slate-50"><td class="p-4 font-bold text-[#0A2540]">${a.title}</td><td class="p-4 text-slate-500">${a.courses?.title||'-'}</td><td class="p-4 text-slate-400 text-xs">${a.due_date?new Date(a.due_date).toLocaleDateString():'-'}</td><td class="p-4 font-bold">${a.max_points}</td><td class="p-4"><button onclick="deleteAssignment('${a.id}')" class="text-red-400 font-bold text-sm">Delete</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function openGradeModal(subId, studentName, assignTitle, maxPts) {
+  gradeSubId = subId;
+  document.getElementById('gm-student').textContent    = studentName;
+  document.getElementById('gm-assignment').textContent = assignTitle;
+  document.getElementById('gm-max').textContent        = maxPts;
+  document.getElementById('gm-grade').value            = '';
+  document.getElementById('gm-feedback').value         = '';
+  document.getElementById('gm-err').classList.add('hidden');
+  document.getElementById('grade-modal').classList.remove('hidden');
+}
+
+async function submitGrade() {
+  const grade = parseInt(document.getElementById('gm-grade').value);
+  const feedback = document.getElementById('gm-feedback').value.trim();
+  const err = document.getElementById('gm-err');
+  err.classList.add('hidden');
+  if (isNaN(grade) || grade < 0) { err.textContent='Please enter a valid grade.'; err.classList.remove('hidden'); return; }
+  const btn = document.getElementById('gm-btn'); btn.disabled=true; btn.textContent='Saving...';
+  const { error } = await sb.from('submissions').update({ grade, feedback, graded_by:currentUser.id, graded_at:new Date().toISOString() }).eq('id', gradeSubId);
+  btn.disabled=false; btn.textContent='Save Grade';
+  if (error) { err.textContent=error.message; err.classList.remove('hidden'); return; }
+  closeModal('grade-modal');
+  showToast('Grade saved!');
+  loadSubmissions(currentTab==='pending');
+}
+
+async function openCreateModal() {
+  document.getElementById('ca-title').value='';
+  document.getElementById('ca-desc').value='';
+  document.getElementById('ca-course').value='';
+  document.getElementById('ca-due').value='';
+  document.getElementById('ca-points').value='100';
+  document.getElementById('ca-err').classList.add('hidden');
+  document.getElementById('create-modal').classList.remove('hidden');
+}
+
+async function createAssignment() {
+  const title = document.getElementById('ca-title').value.trim();
+  const courseId = document.getElementById('ca-course').value;
+  const err = document.getElementById('ca-err');
+  err.classList.add('hidden');
+  if (!title||!courseId) { err.textContent='Title and course are required.'; err.classList.remove('hidden'); return; }
+  const { error } = await sb.from('assignments').insert({
+    title, description:document.getElementById('ca-desc').value.trim(),
+    course_id:courseId,
+    due_date:document.getElementById('ca-due').value||null,
+    max_points:parseInt(document.getElementById('ca-points').value)||100,
+    created_by:currentUser.id
+  });
+  if (error) { err.textContent=error.message; err.classList.remove('hidden'); return; }
+  closeModal('create-modal');
+  showToast('Assignment created!');
+  switchTab('assignments');
+}
+
+async function deleteAssignment(id) {
+  if (!confirm('Delete this assignment? All submissions will also be deleted.')) return;
+  const { error } = await sb.from('assignments').delete().eq('id',id);
+  if (error) { showToast(error.message,'error'); return; }
+  showToast('Assignment deleted.'); loadAssignments();
+}
+
+init();
+</script>
+</body>
+</html>

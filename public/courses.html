@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Courses | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .course-card:hover .course-img{transform:scale(1.05)}
+  .course-img{transition:transform .5s cubic-bezier(.4,0,.2,1)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] text-[#001c37]">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm h-20 flex justify-between items-center px-8">
+  <a href="/public/index.html" class="headline font-black text-xl text-[#0A2540]">CyberEdge Academy</a>
+  <div class="hidden md:flex gap-8 text-sm font-bold headline">
+    <a href="/public/courses.html"      class="text-[#007BFF] border-b-2 border-[#007BFF] pb-1">Courses</a>
+    <a href="/public/how-it-works.html" class="text-[#0A2540] hover:text-[#007BFF] transition-colors">How It Works</a>
+    <a href="/public/eligibility.html"  class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Eligibility</a>
+    <a href="/public/about.html"        class="text-[#0A2540] hover:text-[#007BFF] transition-colors">About</a>
+  </div>
+  <div id="nav-auth" class="flex items-center gap-3"></div>
+</nav>
+
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+  <!-- Header -->
+  <header class="mb-12">
+    <div class="flex items-center gap-2 text-[#007BFF] font-bold text-sm tracking-widest uppercase mb-4">
+      <span class="w-8 h-[2px] bg-[#007BFF]"></span>Professional Training
+    </div>
+    <h1 class="headline text-5xl md:text-6xl font-bold text-[#0A2540] mb-4">Expert <span class="text-[#007BFF]">Digital Skills</span> Certification</h1>
+    <p class="text-slate-600 max-w-2xl text-lg leading-relaxed">Master the most in-demand digital competencies through our intensive government-certified training modules.</p>
+  </header>
+
+  <!-- Filters -->
+  <div class="mb-10 bg-white p-5 rounded-xl border border-slate-100 flex flex-col md:flex-row gap-4 items-center">
+    <select id="filter-level" class="border border-slate-200 rounded-lg px-4 py-3 text-sm font-semibold flex-1 md:flex-none md:w-48">
+      <option value="">All Levels</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advanced">Advanced</option>
+    </select>
+    <select id="filter-category" class="border border-slate-200 rounded-lg px-4 py-3 text-sm font-semibold flex-1 md:flex-none md:w-56">
+      <option value="">All Categories</option>
+      <option value="Cyber Defense">Cyber Defense</option>
+      <option value="Data Science AI">Data Science AI</option>
+      <option value="Web Development">Web Development</option>
+      <option value="Design">Design</option>
+      <option value="Data Engineering">Data Engineering</option>
+    </select>
+    <button onclick="loadCourses()" class="sig-grad text-white font-bold px-6 py-3 rounded-lg text-sm">Filter</button>
+    <div class="md:ml-auto">
+      <span class="text-sm font-bold text-[#0A2540]" id="course-count">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Course Grid -->
+  <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="col-span-3 text-center text-slate-400 py-16">Loading courses...</div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#0A2540] text-white py-12 px-8">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <span class="headline font-bold text-lg">CyberEdge Academy</span>
+    <p class="text-slate-400 text-sm">© 2024 CyberEdge Academy. Government Digital Initiative.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = type === "success" ? "#00C896" : "#ef4444";
+  t.style.opacity = "1";
+  setTimeout(() => { t.style.opacity = "0"; }, 3000);
+}
+
+async function loadCourses() {
+  const level    = document.getElementById("filter-level").value;
+  const category = document.getElementById("filter-category").value;
+
+  let query = sb.from("courses").select("*").eq("is_published", true).order("created_at", { ascending: false });
+  if (level)    query = query.eq("level", level);
+  if (category) query = query.eq("category", category);
+
+  const { data, error } = await query;
+  const grid = document.getElementById("course-grid");
+
+  if (error) {
+    grid.innerHTML = `<p class="col-span-3 text-center text-red-500 py-16">${error.message}</p>`; return;
+  }
+  document.getElementById("course-count").textContent = `${data.length} Programs Available`;
+
+  if (!data.length) {
+    grid.innerHTML = `<p class="col-span-3 text-center text-slate-400 py-16">No courses found with these filters.</p>`; return;
+  }
+
+  grid.innerHTML = data.map(c => `
+    <div class="course-card bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:border-[#007BFF]/20 transition-all">
+      <div class="relative h-48 overflow-hidden">
+        <img src="${c.image_url || 'https://placehold.co/400x200/0A2540/ffffff?text=' + encodeURIComponent(c.title)}"
+          alt="${c.title}" class="course-img w-full h-full object-cover"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0A2540]/80 to-transparent"></div>
+        <div class="absolute top-4 left-4">
+          <span class="flex items-center gap-1 bg-[#00C896] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">verified</span>
+            Govt Certified
+          </span>
+        </div>
+        <span class="absolute bottom-4 left-4 text-white headline font-bold text-lg">${c.title}</span>
+      </div>
+      <div class="p-6 flex flex-col flex-1">
+        <p class="text-slate-500 text-sm mb-5 flex-1 line-clamp-2">${c.description || ''}</p>
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#007BFF] text-lg">schedule</span>
+            <div><p class="text-slate-400 font-bold uppercase">Duration</p><p class="font-bold text-[#0A2540]">${c.duration_weeks} Wks / ${c.contact_hours} Hrs</p></div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#00C896] text-lg">bar_chart</span>
+            <div><p class="text-slate-400 font-bold uppercase">Level</p><p class="font-bold text-[#0A2540]">${c.level}</p></div>
+          </div>
+        </div>
+        <button onclick="enroll('${c.id}')"
+          class="w-full sig-grad text-white headline font-bold py-3.5 rounded-lg text-sm hover:opacity-90 transition-all">
+          Enroll Now
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function enroll(courseId) {
+  const user = await getUser();
+  if (!user) {
+    showToast("Please login first to enroll.", "error");
+    setTimeout(() => window.location.href = "/public/login.html", 1200);
+    return;
+  }
+  const { error } = await sb.from("enrollments").insert({ student_id: user.id, course_id: courseId });
+  if (error) {
+    if (error.code === "23505") showToast("You are already enrolled!", "error");
+    else showToast(error.message, "error");
+    return;
+  }
+  showToast("Enrolled successfully! Redirecting...");
+  setTimeout(() => window.location.href = "/student/dashboard.html", 1500);
+}
+
+setupNav();
+loadCourses();
+</script>
+</body>
+</html>

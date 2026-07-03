@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Settings | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/admin/dashboard.html"     class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/admin/courses.html"       class="sl"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+    <a href="/admin/users.html"         class="sl"><span class="material-symbols-outlined">people</span>Users</a>
+    <a href="/admin/applications.html"  class="sl"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+    <a href="/admin/attendance.html"    class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/admin/announcements.html" class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+    <a href="/admin/analytics.html"     class="sl"><span class="material-symbols-outlined">insights</span>Analytics</a>
+    <a href="/admin/settings.html"      class="sl active"><span class="material-symbols-outlined">settings</span>Settings</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4">
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="flex-1 p-8">
+  <div class="mb-8">
+    <h1 class="headline text-3xl font-bold text-[#0A2540]">System Configuration</h1>
+    <p class="text-slate-400 mt-1">Platform settings and API integrations.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+
+    <!-- Supabase connection info -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <h3 class="headline font-bold text-lg text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">api</span> API Integrations
+      </h3>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 bg-[#f0fff8] rounded-xl border border-[#009e76]/20">
+          <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-[#009e76] animate-pulse"></span>
+            <div>
+              <p class="font-bold text-sm text-[#0A2540]">Supabase Database</p>
+              <p class="text-xs text-slate-400">Connected · Auth + Database + Storage</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-[#009e76]">ACTIVE</span>
+        </div>
+        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-1">Project URL</p>
+          <p class="text-sm font-bold text-[#0A2540] break-all" id="proj-url">Loading...</p>
+        </div>
+        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <p class="text-xs font-bold uppercase text-slate-400 mb-1">Total Tables</p>
+          <p class="text-sm font-bold text-[#0A2540]">10 tables (profiles, courses, enrollments, applications, assignments, submissions, attendance, announcements, notifications, sessions)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Management -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <h3 class="headline font-bold text-lg text-[#0A2540] mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">manage_accounts</span> Role Management
+      </h3>
+      <p class="text-slate-500 text-sm mb-6">Quick role assignment. For full user management go to the Users page.</p>
+      <div class="space-y-3" id="role-stats">
+        <p class="text-slate-400 text-sm">Loading role counts...</p>
+      </div>
+      <a href="/admin/users.html" class="mt-6 block w-full py-3 border-2 border-[#007BFF] text-[#007BFF] font-bold rounded-xl text-center hover:bg-[#eff4ff] transition-colors">Manage Users & Roles →</a>
+    </div>
+
+    <!-- Platform Stats -->
+    <div class="bg-[#0A2540] text-white rounded-2xl p-8 shadow-sm">
+      <h3 class="headline font-bold text-lg mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#00C896]">monitoring</span> Live Platform Stats
+      </h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Students</p><p class="headline font-black text-2xl" id="ps-students">-</p></div>
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Enrollments</p><p class="headline font-black text-2xl" id="ps-enrollments">-</p></div>
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Courses</p><p class="headline font-black text-2xl" id="ps-courses">-</p></div>
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Applications</p><p class="headline font-black text-2xl" id="ps-apps">-</p></div>
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Submissions</p><p class="headline font-black text-2xl" id="ps-subs">-</p></div>
+        <div class="bg-white/10 p-4 rounded-xl"><p class="text-[#768dad] text-xs mb-1">Notifications</p><p class="headline font-black text-2xl" id="ps-notifs">-</p></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <h3 class="headline font-bold text-lg text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">flash_on</span> Quick Actions
+      </h3>
+      <div class="space-y-3">
+        <a href="/admin/courses.html"      class="flex items-center justify-between p-4 rounded-xl hover:bg-[#eff4ff] transition-colors group"><span class="font-bold text-sm text-[#0A2540]">Add New Course</span><span class="material-symbols-outlined text-slate-300 group-hover:text-[#007BFF] transition-colors">chevron_right</span></a>
+        <a href="/admin/users.html"        class="flex items-center justify-between p-4 rounded-xl hover:bg-[#eff4ff] transition-colors group"><span class="font-bold text-sm text-[#0A2540]">Manage User Roles</span><span class="material-symbols-outlined text-slate-300 group-hover:text-[#007BFF] transition-colors">chevron_right</span></a>
+        <a href="/admin/applications.html" class="flex items-center justify-between p-4 rounded-xl hover:bg-[#eff4ff] transition-colors group"><span class="font-bold text-sm text-[#0A2540]">Review Applications</span><span class="material-symbols-outlined text-slate-300 group-hover:text-[#007BFF] transition-colors">chevron_right</span></a>
+        <a href="/admin/announcements.html" class="flex items-center justify-between p-4 rounded-xl hover:bg-[#eff4ff] transition-colors group"><span class="font-bold text-sm text-[#0A2540]">Send Announcement</span><span class="material-symbols-outlined text-slate-300 group-hover:text-[#007BFF] transition-colors">chevron_right</span></a>
+        <a href="/admin/analytics.html"   class="flex items-center justify-between p-4 rounded-xl hover:bg-[#eff4ff] transition-colors group"><span class="font-bold text-sm text-[#0A2540]">View Analytics</span><span class="material-symbols-outlined text-slate-300 group-hover:text-[#007BFF] transition-colors">chevron_right</span></a>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+async function init() {
+  await requireRole(['admin'],'/student/dashboard.html');
+  document.getElementById('proj-url').textContent = 'https://bxldognxqykyvqtqxiga.supabase.co';
+
+  const [
+    {count:s},{count:e},{count:c},{count:a},{count:sub},{count:n},
+    {data:roles}
+  ] = await Promise.all([
+    sb.from('profiles').select('*',{count:'exact',head:true}).eq('role','student'),
+    sb.from('enrollments').select('*',{count:'exact',head:true}),
+    sb.from('courses').select('*',{count:'exact',head:true}),
+    sb.from('applications').select('*',{count:'exact',head:true}),
+    sb.from('submissions').select('*',{count:'exact',head:true}),
+    sb.from('notifications').select('*',{count:'exact',head:true}),
+    sb.from('profiles').select('role'),
+  ]);
+
+  document.getElementById('ps-students').textContent    = s||0;
+  document.getElementById('ps-enrollments').textContent = e||0;
+  document.getElementById('ps-courses').textContent     = c||0;
+  document.getElementById('ps-apps').textContent        = a||0;
+  document.getElementById('ps-subs').textContent        = sub||0;
+  document.getElementById('ps-notifs').textContent      = n||0;
+
+  // Role breakdown
+  const roleCounts = {student:0,instructor:0,admin:0};
+  (roles||[]).forEach(r=>{ if(roleCounts[r.role]!==undefined) roleCounts[r.role]++; });
+  const roleColors = {student:'text-[#007BFF]',instructor:'text-[#009e76]',admin:'text-red-500'};
+  const roleIcons  = {student:'school',instructor:'co_present',admin:'admin_panel_settings'};
+  document.getElementById('role-stats').innerHTML = Object.entries(roleCounts).map(([role,count])=>`
+    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined ${roleColors[role]}">${roleIcons[role]}</span>
+        <span class="font-bold capitalize text-sm text-[#0A2540]">${role}s</span>
+      </div>
+      <span class="headline font-black text-xl ${roleColors[role]}">${count}</span>
+    </div>`).join('');
+}
+init();
+</script>
+</body>
+</html>

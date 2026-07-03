@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Verify Identity | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .otp-input{width:3.5rem;height:4rem;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:1.75rem;font-weight:700;border:2px solid #c4c6ce;border-radius:.75rem;outline:none;transition:all .2s}
+  .otp-input:focus{border-color:#007BFF;box-shadow:0 0 0 4px rgba(0,123,255,.1)}
+  .otp-input.filled{border-color:#00C896;background:#f0fff8}
+  .tech-dots{background-image:radial-gradient(rgba(0,123,255,.15) 1.5px,transparent 1.5px);background-size:28px 28px}
+</style>
+</head>
+<body class="bg-[#f8f9ff] min-h-screen flex flex-col">
+
+<!-- TOP BAR -->
+<header class="bg-[#0A2540] px-8 py-4 flex items-center justify-between">
+  <a href="/public/index.html" class="headline font-black text-xl text-white tracking-tighter">CyberEdge Academy</a>
+  <div class="hidden md:flex items-center gap-2 text-[#768dad] text-sm font-bold">
+    <span class="w-6 h-6 rounded-full bg-[#00C896]/20 text-[#00C896] text-xs flex items-center justify-center font-bold">1</span> Register
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="w-6 h-6 rounded-full sig-grad text-white text-xs flex items-center justify-center font-bold">2</span>
+    <span class="text-white font-bold">Verify</span>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="w-6 h-6 rounded-full bg-white/10 text-xs flex items-center justify-center font-bold">3</span> Profile
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="w-6 h-6 rounded-full bg-white/10 text-xs flex items-center justify-center font-bold">4</span> Apply
+  </div>
+</header>
+
+<main class="flex-grow flex items-center justify-center p-6">
+  <div class="w-full max-w-lg">
+
+    <!-- ICON -->
+    <div class="text-center mb-10">
+      <div class="inline-flex w-24 h-24 rounded-full sig-grad items-center justify-center shadow-2xl mb-6 relative">
+        <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">mark_email_read</span>
+        <span class="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-[#00C896] flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">verified</span>
+        </span>
+      </div>
+      <h1 class="headline text-4xl font-bold text-[#0A2540] mb-2">Verify Identity</h1>
+      <p class="text-[#43474d] text-lg">We sent a 6-digit code to your email.<br/>Enter it below to confirm your identity.</p>
+      <p class="mt-2 text-[#007BFF] font-bold text-sm" id="email-display">Loading...</p>
+    </div>
+
+    <!-- OTP BOX -->
+    <div class="bg-white rounded-2xl p-8 shadow-xl border border-[#e5eeff]">
+      <div class="flex justify-center gap-3 mb-6" id="otp-inputs">
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+        <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"/>
+      </div>
+
+      <!-- Timer -->
+      <div class="flex items-center justify-between text-sm mb-6">
+        <div class="flex items-center gap-2 text-[#43474d]">
+          <span class="material-symbols-outlined text-sm text-[#007BFF]">timer</span>
+          Code expires in <span id="timer" class="headline font-bold text-[#007BFF] ml-1">02:00</span>
+        </div>
+        <button id="resend-btn" onclick="resendCode()" disabled class="text-[#007BFF] font-bold text-sm disabled:text-[#c4c6ce] disabled:cursor-not-allowed">Resend Code</button>
+      </div>
+
+      <p id="otp-err" class="text-red-500 text-sm text-center mb-4 hidden"></p>
+      <p id="otp-suc" class="text-[#009e76] text-sm text-center mb-4 hidden"></p>
+
+      <button id="verify-btn" onclick="verifyOTP()"
+        class="w-full sig-grad text-white py-4 rounded-xl headline font-bold text-lg shadow-lg hover:scale-[1.01] active:scale-95 transition-all">
+        Verify & Continue
+      </button>
+
+      <p class="text-center text-sm text-[#43474d] mt-6">
+        Wrong email? <a href="/public/signup.html" class="font-bold text-[#007BFF] hover:underline">Go back</a>
+      </p>
+    </div>
+
+    <!-- Security note -->
+    <div class="mt-6 flex items-center justify-center gap-2 text-[#43474d] text-xs">
+      <span class="material-symbols-outlined text-sm text-[#007BFF]">lock</span>
+      Your verification is secured with end-to-end encryption.
+    </div>
+  </div>
+</main>
+
+<script>
+// Show current user email
+async function init() {
+  const user = await getUser();
+  if (user) {
+    document.getElementById("email-display").textContent = user.email;
+  }
+}
+init();
+
+// OTP input auto-advance
+const inputs = document.querySelectorAll(".otp-input");
+inputs.forEach((inp, i) => {
+  inp.addEventListener("input", () => {
+    inp.value = inp.value.replace(/[^0-9]/g, "");
+    if (inp.value) {
+      inp.classList.add("filled");
+      if (i < inputs.length - 1) inputs[i + 1].focus();
+    } else {
+      inp.classList.remove("filled");
+    }
+  });
+  inp.addEventListener("keydown", e => {
+    if (e.key === "Backspace" && !inp.value && i > 0) {
+      inputs[i - 1].focus();
+      inputs[i - 1].classList.remove("filled");
+    }
+  });
+  inp.addEventListener("paste", e => {
+    const paste = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, 6);
+    paste.split("").forEach((ch, idx) => {
+      if (inputs[idx]) { inputs[idx].value = ch; inputs[idx].classList.add("filled"); }
+    });
+    if (inputs[Math.min(paste.length, 5)]) inputs[Math.min(paste.length, 5)].focus();
+    e.preventDefault();
+  });
+});
+
+// Countdown timer
+let seconds = 120;
+const timerEl = document.getElementById("timer");
+const resendBtn = document.getElementById("resend-btn");
+const interval = setInterval(() => {
+  seconds--;
+  const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const s = String(seconds % 60).padStart(2, "0");
+  timerEl.textContent = `${m}:${s}`;
+  if (seconds <= 0) {
+    clearInterval(interval);
+    timerEl.textContent = "00:00";
+    timerEl.classList.remove("text-[#007BFF]");
+    timerEl.classList.add("text-red-400");
+    resendBtn.disabled = false;
+  }
+}, 1000);
+
+async function resendCode() {
+  const user = await getUser();
+  if (!user) return;
+  const { error } = await sb.auth.resend({ type: "signup", email: user.email });
+  const suc = document.getElementById("otp-suc");
+  if (!error) {
+    suc.textContent = "New code sent! Check your email.";
+    suc.classList.remove("hidden");
+    setTimeout(() => suc.classList.add("hidden"), 3000);
+  }
+}
+
+async function verifyOTP() {
+  const code = Array.from(inputs).map(i => i.value).join("");
+  const err = document.getElementById("otp-err");
+  const btn = document.getElementById("verify-btn");
+
+  if (code.length < 6) {
+    err.textContent = "Please enter all 6 digits.";
+    err.classList.remove("hidden"); return;
+  }
+
+  btn.disabled = true; btn.textContent = "Verifying...";
+
+  // Supabase email OTP verify
+  const { error } = await sb.auth.verifyOtp({
+    email: (await getUser())?.email || "",
+    token: code,
+    type: "email"
+  });
+
+  btn.disabled = false; btn.textContent = "Verify & Continue";
+
+  if (error) {
+    err.textContent = error.message; err.classList.remove("hidden"); return;
+  }
+  // Go to profile creation
+  window.location.href = "/public/profile-create.html";
+}
+</script>
+</body>
+</html>

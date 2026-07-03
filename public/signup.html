@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign Up | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .tech-pattern{background-color:#000f22;background-image:radial-gradient(#007BFF .5px,transparent .5px);background-size:24px 24px}
+</style>
+</head>
+<body class="font-body min-h-screen flex items-center justify-center tech-pattern p-6">
+
+<main class="w-full max-w-[480px]">
+  <a href="/public/index.html" class="block text-center headline font-black text-3xl tracking-tighter text-white mb-2">CyberEdge Academy</a>
+  <p class="text-center text-[#c4dcff]/60 text-sm mb-8 uppercase tracking-widest">Secure Government Training Portal</p>
+
+  <div class="bg-white rounded-2xl p-8 shadow-2xl border border-[#c4c6ce]/15">
+    <h2 class="headline font-bold text-2xl text-[#000f22] mb-1">Create Account</h2>
+    <p class="text-[#43474d] text-sm mb-6">Join the next generation of digital defense experts.</p>
+
+    <form id="signupForm" class="space-y-5">
+      <div>
+        <label class="text-xs font-bold uppercase tracking-widest text-[#43474d]">Full Name</label>
+        <div class="relative mt-1">
+          <input id="name" type="text" required placeholder="Your full name"
+            class="w-full pl-4 pr-4 py-4 bg-[#eff4ff] border border-[#c4c6ce]/15 rounded-xl focus:ring-4 focus:ring-[#0059bb]/10 focus:border-[#0059bb] outline-none transition-all text-[#001c37]"/>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase tracking-widest text-[#43474d]">Email Address</label>
+        <input id="email" type="email" required placeholder="you@example.com"
+          class="w-full mt-1 pl-4 pr-4 py-4 bg-[#eff4ff] border border-[#c4c6ce]/15 rounded-xl focus:ring-4 focus:ring-[#0059bb]/10 focus:border-[#0059bb] outline-none transition-all text-[#001c37]"/>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase tracking-widest text-[#43474d]">Phone Number</label>
+        <input id="phone" type="tel" placeholder="+92 300 1234567"
+          class="w-full mt-1 pl-4 pr-4 py-4 bg-[#eff4ff] border border-[#c4c6ce]/15 rounded-xl focus:ring-4 focus:ring-[#0059bb]/10 focus:border-[#0059bb] outline-none transition-all text-[#001c37]"/>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase tracking-widest text-[#43474d]">Password</label>
+        <input id="password" type="password" required minlength="6" placeholder="At least 6 characters"
+          class="w-full mt-1 pl-4 pr-4 py-4 bg-[#eff4ff] border border-[#c4c6ce]/15 rounded-xl focus:ring-4 focus:ring-[#0059bb]/10 focus:border-[#0059bb] outline-none transition-all text-[#001c37]"/>
+      </div>
+
+      <p id="err" class="text-red-500 text-sm hidden"></p>
+      <p id="suc" class="text-green-600 text-sm hidden"></p>
+
+      <button type="submit" id="submitBtn"
+        class="w-full sig-grad text-white headline font-bold py-4 rounded-xl shadow-lg hover:scale-[.98] transition-transform flex items-center justify-center gap-2 group mt-2">
+        Create Account
+        <span style="font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24" class="group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-[#43474d] mt-6">
+      Already have an account? <a href="/public/login.html" class="font-bold text-[#0059bb] hover:underline">Log in</a>
+    </p>
+  </div>
+</main>
+
+<script>
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  const err = document.getElementById("err");
+  const suc = document.getElementById("suc");
+  err.classList.add("hidden"); suc.classList.add("hidden");
+  btn.disabled = true; btn.textContent = "Creating...";
+
+  const name  = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const pass  = document.getElementById("password").value;
+
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { full_name: name, phone, role: "student" } }
+  });
+
+  btn.disabled = false; btn.textContent = "Create Account";
+
+  if (error) {
+    err.textContent = error.message; err.classList.remove("hidden");
+    return;
+  }
+
+  if (data.session) {
+    // Email confirm OFF — direct login
+    window.location.href = "/student/dashboard.html";
+  } else {
+    // Email confirm ON — show message
+    suc.textContent = "Account created! Check your email to confirm, then log in.";
+    suc.classList.remove("hidden");
+    document.getElementById("signupForm").reset();
+  }
+});
+</script>
+</body>
+</html>

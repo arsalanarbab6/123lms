@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact Us | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] text-[#0A2540]">
+
+<!-- NAVBAR -->
+<header class="bg-[#0A2540] border-b border-white/10 sticky top-0 z-50 shadow-lg w-full">
+  <div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="/public/index.html" class="headline font-bold text-2xl text-white tracking-tighter">CyberEdge Academy</a>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-bold headline">
+      <a href="/public/courses.html"      class="text-slate-200 hover:text-[#00C896] transition-colors uppercase">Curriculum</a>
+      <a href="/public/how-it-works.html" class="text-slate-200 hover:text-[#00C896] transition-colors uppercase">Programs</a>
+      <a href="/public/faqs.html"         class="text-slate-200 hover:text-[#00C896] transition-colors uppercase">FAQs</a>
+    </nav>
+    <div id="nav-auth" class="flex items-center gap-3"></div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="relative bg-[#0A2540] py-24 px-8 overflow-hidden">
+    <div class="absolute inset-0 opacity-20 pointer-events-none">
+      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#007BFF] rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#00C896] rounded-full blur-[100px]"></div>
+    </div>
+    <div class="relative max-w-screen-xl mx-auto text-center">
+      <span class="inline-block py-1.5 px-4 mb-6 rounded-full bg-[#00C896]/10 text-[#00C896] text-xs tracking-widest uppercase font-bold border border-[#00C896]/30">Connect with experts</span>
+      <h1 class="headline text-5xl md:text-7xl font-bold text-white tracking-tighter mb-8 leading-[.9]">
+        Get in touch <span class="text-[#00C896]">with us.</span>
+      </h1>
+      <p class="text-slate-300 text-xl max-w-2xl mx-auto leading-relaxed">
+        We're here to help you navigate your digital future. Reach out to the architects of tomorrow.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="max-w-screen-2xl mx-auto px-8 -mt-16 pb-24 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <!-- LEFT — Contact info -->
+      <div class="lg:col-span-4 space-y-6">
+        <!-- Address -->
+        <div class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-[#00C896]">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-lg bg-[#007BFF]/10 flex items-center justify-center text-[#007BFF]">
+              <span class="material-symbols-outlined">location_on</span>
+            </div>
+            <div>
+              <h3 class="headline font-bold text-xl">Headquarters</h3>
+              <p class="text-slate-600 mt-2 leading-relaxed text-sm">KPITB 134, Industrial Estate, Hayatabad, Peshawar, Khyber Pakhtunkhwa, Pakistan.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Phone + Email -->
+        <div class="bg-[#0A2540] text-white p-8 rounded-xl shadow-xl border border-white/5 space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#00C896]">
+              <span class="material-symbols-outlined">call</span>
+            </div>
+            <div>
+              <h4 class="headline font-bold text-xs tracking-widest uppercase text-slate-400 mb-2">Direct Lines</h4>
+              <ul class="space-y-1 headline font-bold text-lg">
+                <li>091-9219505-8</li>
+                <li>091-5891613</li>
+                <li>091-5891516</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#00C896]">
+              <span class="material-symbols-outlined">alternate_email</span>
+            </div>
+            <div>
+              <h4 class="headline font-bold text-xs tracking-widest uppercase text-slate-400 mb-2">Email</h4>
+              <p class="headline font-bold text-lg"><a href="mailto:info@kpitb.gov.pk" class="hover:text-[#00C896] transition-colors">info@kpitb.gov.pk</a></p>
+            </div>
+          </div>
+        </div>
+        <!-- Hours -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+          <p class="headline font-bold text-xs uppercase tracking-widest text-slate-400 mb-3">Office Hours</p>
+          <p class="text-sm text-slate-600">Monday — Friday: 9:00 AM — 5:00 PM</p>
+          <p class="text-sm text-slate-600 mt-1">Saturday: 10:00 AM — 2:00 PM</p>
+          <div class="flex items-center gap-2 mt-3">
+            <span class="w-2 h-2 rounded-full bg-[#00C896] animate-pulse"></span>
+            <span class="text-xs font-bold text-[#00C896]">Currently Open</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Form -->
+      <div class="lg:col-span-8">
+        <div class="bg-white rounded-xl p-8 md:p-12 shadow-xl border border-slate-100">
+          <h2 class="headline text-3xl font-bold mb-2">Send us a message</h2>
+          <p class="text-slate-600 mb-8">We'll get back to you within 1-2 business days.</p>
+
+          <form id="contactForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="headline text-xs font-bold uppercase tracking-widest text-[#0A2540] block mb-2">Full Name</label>
+                <input id="cf-name" required type="text" placeholder="Your full name"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#007BFF] focus:border-transparent transition-all"/>
+              </div>
+              <div>
+                <label class="headline text-xs font-bold uppercase tracking-widest text-[#0A2540] block mb-2">Email Address</label>
+                <input id="cf-email" required type="email" placeholder="you@example.com"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#007BFF] focus:border-transparent transition-all"/>
+              </div>
+            </div>
+            <div>
+              <label class="headline text-xs font-bold uppercase tracking-widest text-[#0A2540] block mb-2">Subject</label>
+              <input id="cf-subject" required type="text" placeholder="How can we help?"
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#007BFF] focus:border-transparent transition-all"/>
+            </div>
+            <div>
+              <label class="headline text-xs font-bold uppercase tracking-widest text-[#0A2540] block mb-2">Message</label>
+              <textarea id="cf-message" required rows="6" placeholder="Your message..."
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#007BFF] focus:border-transparent transition-all resize-none"></textarea>
+            </div>
+            <p id="cf-err" class="text-red-500 text-sm hidden"></p>
+            <p id="cf-suc" class="text-[#009e76] text-sm hidden"></p>
+            <div class="pt-2">
+              <button type="submit" id="cf-submit"
+                class="sig-grad text-white w-full md:w-auto px-10 py-4 rounded-lg headline font-bold text-lg uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3">
+                Send Message
+                <span class="material-symbols-outlined">send</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="max-w-screen-2xl mx-auto px-8 pb-24">
+    <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
+      <div class="w-full h-[400px] bg-slate-100 relative">
+        <iframe class="w-full h-full" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+          src="https://maps.google.com/maps?q=KPITB+Hayatabad+Peshawar&output=embed">
+        </iframe>
+        <div class="absolute top-6 left-6 bg-white/95 p-5 rounded-lg max-w-xs shadow-xl hidden md:block border border-slate-200">
+          <h4 class="headline font-bold text-[#0A2540] mb-1">Academy Location</h4>
+          <p class="text-sm text-slate-600">KPITB Building, Industrial Estate, Hayatabad, Peshawar</p>
+          <div class="mt-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#00C896] animate-pulse"></span>
+            <span class="text-xs font-bold text-[#009e76]">Live Updates</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-[#0A2540] w-full py-12 px-8 border-t border-white/5">
+  <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="headline font-bold text-xl text-white">CyberEdge Academy</div>
+    <div class="flex flex-wrap gap-6 text-sm text-slate-400">
+      <a href="#" class="hover:text-[#00C896] transition-colors">Privacy Policy</a>
+      <a href="#" class="hover:text-[#00C896] transition-colors">Terms of Service</a>
+      <a href="/public/faqs.html" class="hover:text-[#00C896] transition-colors">FAQs</a>
+    </div>
+    <p class="text-slate-500 text-xs">© 2024 CyberEdge Academy. Engineering the Future.</p>
+  </div>
+</footer>
+
+<script>
+setupNav();
+
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const btn = document.getElementById("cf-submit");
+  const suc = document.getElementById("cf-suc");
+  const err = document.getElementById("cf-err");
+  err.classList.add("hidden"); suc.classList.add("hidden");
+  btn.disabled = true; btn.textContent = "Sending...";
+
+  const name = document.getElementById("cf-name").value.trim();
+  // Simulate sending (replace with actual email API if needed)
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = `Send Message <span class="material-symbols-outlined">send</span>`;
+    suc.textContent = `Thanks ${name}! Your message has been received. We'll respond within 1-2 business days.`;
+    suc.classList.remove("hidden");
+    document.getElementById("contactForm").reset();
+  }, 1000);
+});
+</script>
+</body>
+</html>

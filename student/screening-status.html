@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Screening Status | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+  .sidebar-link:hover{background:#eff4ff;color:#007BFF}
+  .sidebar-link.active{background:#dce9ff;color:#007BFF}
+  .step-dot{width:2.5rem;height:2.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.875rem;flex-shrink:0}
+  .step-line{flex:1;height:2px}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+
+<div class="flex min-h-screen">
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6">
+    <div class="px-6 mb-10">
+      <a href="/public/index.html" class="headline font-black text-xl text-[#0A2540] block">CyberEdge Academy</a>
+      <p class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Student Portal</p>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"        class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"        class="sidebar-link"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/screening-status.html"  class="sidebar-link active"><span class="material-symbols-outlined">assignment_ind</span>Screening Status</a>
+      <a href="/student/notifications.html"     class="sidebar-link"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"           class="sidebar-link"><span class="material-symbols-outlined">person</span>Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 p-8">
+    <!-- HEADER -->
+    <div class="flex items-center justify-between mb-10">
+      <div>
+        <h1 class="headline text-3xl font-bold text-[#0A2540]">Screening Status</h1>
+        <p class="text-[#43474d] mt-1">Track your application through the selection process.</p>
+      </div>
+      <a href="/student/dashboard.html" class="text-[#007BFF] font-bold text-sm flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">arrow_back</span> Dashboard
+      </a>
+    </div>
+
+    <!-- STATUS CARD -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm mb-8" id="status-card">
+      <div class="flex items-center gap-6 mb-8">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-3xl" id="status-icon-bg">
+          <span class="material-symbols-outlined text-3xl" id="status-icon" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">hourglass_top</span>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-[#768dad] uppercase tracking-widest mb-1">Current Status</p>
+          <h2 class="headline text-3xl font-bold text-[#0A2540]" id="status-label">Loading...</h2>
+          <p class="text-sm text-[#43474d] mt-1" id="status-desc">Fetching your application status...</p>
+        </div>
+        <div class="ml-auto text-right hidden" id="submitted-on">
+          <p class="text-xs text-[#768dad] uppercase font-bold">Submitted</p>
+          <p class="headline font-bold text-[#0A2540]" id="submitted-date">-</p>
+        </div>
+      </div>
+
+      <!-- PROGRESS PIPELINE -->
+      <div class="flex items-center gap-0 mb-4">
+        <div class="flex flex-col items-center">
+          <div class="step-dot" id="step1" style="background:#dce9ff;color:#007BFF">1</div>
+          <p class="text-[10px] font-bold mt-2 text-center text-[#768dad]">Applied</p>
+        </div>
+        <div class="step-line bg-slate-200" id="line1"></div>
+        <div class="flex flex-col items-center">
+          <div class="step-dot" id="step2" style="background:#f1f5f9;color:#94a3b8">2</div>
+          <p class="text-[10px] font-bold mt-2 text-center text-[#768dad]">Screening</p>
+        </div>
+        <div class="step-line bg-slate-200" id="line2"></div>
+        <div class="flex flex-col items-center">
+          <div class="step-dot" id="step3" style="background:#f1f5f9;color:#94a3b8">3</div>
+          <p class="text-[10px] font-bold mt-2 text-center text-[#768dad]">Shortlisted</p>
+        </div>
+        <div class="step-line bg-slate-200" id="line3"></div>
+        <div class="flex flex-col items-center">
+          <div class="step-dot" id="step4" style="background:#f1f5f9;color:#94a3b8">4</div>
+          <p class="text-[10px] font-bold mt-2 text-center text-[#768dad]">Accepted</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANDIDATE ROADMAP -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl p-6 border border-[#e5eeff] shadow-sm">
+        <h4 class="headline text-lg font-bold text-[#0A2540] mb-6">Candidate Roadmap</h4>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#00C896]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            <div><p class="font-bold text-sm">Account Created</p><p class="text-xs text-[#768dad]">Completed</p></div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#00C896]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            <div><p class="font-bold text-sm">Profile Completed</p><p class="text-xs text-[#768dad]">Completed</p></div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#00C896]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            <div><p class="font-bold text-sm">Documents Uploaded</p><p class="text-xs text-[#768dad]">Completed</p></div>
+          </div>
+          <div class="flex items-center gap-3" id="roadmap-test">
+            <span class="material-symbols-outlined text-[#768dad]">radio_button_unchecked</span>
+            <div><p class="font-bold text-sm">Screening Test</p><p class="text-xs text-[#768dad]">Pending</p></div>
+          </div>
+          <div class="flex items-center gap-3" id="roadmap-result">
+            <span class="material-symbols-outlined text-[#768dad]">radio_button_unchecked</span>
+            <div><p class="font-bold text-sm">Final Result</p><p class="text-xs text-[#768dad]">Pending</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Readiness -->
+      <div class="bg-white rounded-2xl p-6 border border-[#e5eeff] shadow-sm">
+        <h3 class="headline text-lg mb-4 font-bold text-[#0A2540]">Overall Readiness</h3>
+        <div class="relative w-40 h-40 mx-auto mb-6">
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#dce9ff" stroke-width="10"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#grad)" stroke-width="10"
+              stroke-dasharray="251" stroke-dashoffset="62" stroke-linecap="round"/>
+            <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#007BFF"/><stop offset="100%" stop-color="#00C896"/></linearGradient></defs>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="headline text-3xl font-black text-[#0A2540]">75%</span>
+            <span class="text-xs text-[#768dad] font-bold uppercase">Ready</span>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex justify-between text-sm"><span class="font-bold">Profile</span><span class="text-[#009e76] font-bold">100%</span></div>
+          <div class="flex justify-between text-sm"><span class="font-bold">Documents</span><span class="text-[#009e76] font-bold">100%</span></div>
+          <div class="flex justify-between text-sm"><span class="font-bold">Screening Test</span><span class="text-[#f59e0b] font-bold">Pending</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREPARATION RESOURCES -->
+    <div class="bg-[#0A2540] text-white rounded-2xl p-8">
+      <h3 class="headline text-2xl font-bold mb-2">Preparation Resources</h3>
+      <p class="text-[#768dad] mb-6">While you wait, prepare for your screening test.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="#" class="bg-white/10 hover:bg-white/20 transition-colors p-5 rounded-xl">
+          <span class="material-symbols-outlined text-[#00C896] mb-3 block">psychology</span>
+          <h4 class="headline font-bold mb-1">IQ Practice</h4>
+          <p class="text-xs text-[#768dad]">Sharpen your logical reasoning skills with practice tests.</p>
+        </a>
+        <a href="#" class="bg-white/10 hover:bg-white/20 transition-colors p-5 rounded-xl">
+          <span class="material-symbols-outlined text-[#007BFF] mb-3 block">computer</span>
+          <h4 class="headline font-bold mb-1">Basic Computing</h4>
+          <p class="text-xs text-[#768dad]">Review fundamental computing concepts and terminology.</p>
+        </a>
+        <a href="#" class="bg-white/10 hover:bg-white/20 transition-colors p-5 rounded-xl">
+          <span class="material-symbols-outlined text-[#f59e0b] mb-3 block">translate</span>
+          <h4 class="headline font-bold mb-1">English MCQs</h4>
+          <p class="text-xs text-[#768dad]">Practice grammar, vocabulary, and comprehension.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const statusConfig = {
+  pending:     { label:"Application Submitted", desc:"Your application is under initial review. No action needed.", icon:"hourglass_top", color:"#007BFF", step:1 },
+  screening:   { label:"Screening Test Invited", desc:"You have been invited for the screening test. Check your email for the link.", icon:"quiz", color:"#f59e0b", step:2 },
+  shortlisted: { label:"Shortlisted!", desc:"Congratulations! You have been shortlisted. Allocation will be announced soon.", icon:"star", color:"#009e76", step:3 },
+  accepted:    { label:"Accepted & Enrolled!", desc:"You have been accepted. Welcome to CyberEdge Academy!", icon:"celebration", color:"#00C896", step:4 },
+  rejected:    { label:"Not Selected", desc:"Unfortunately you were not selected this time. You may apply again next cycle.", icon:"cancel", color:"#ef4444", step:1 },
+};
+
+async function init() {
+  const user = await requireAuth("/public/login.html");
+  if (!user) return;
+
+  const { data: app } = await sb
+    .from("applications")
+    .select("*")
+    .eq("applicant_id", user.id)
+    .order("submitted_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (!app) {
+    document.getElementById("status-label").textContent = "No Application Found";
+    document.getElementById("status-desc").textContent = "You haven't submitted an application yet.";
+    return;
+  }
+
+  const cfg = statusConfig[app.status] || statusConfig.pending;
+  document.getElementById("status-label").textContent    = cfg.label;
+  document.getElementById("status-desc").textContent     = cfg.desc;
+  document.getElementById("status-icon").textContent     = cfg.icon;
+  document.getElementById("status-icon-bg").style.background = cfg.color;
+
+  // Show submitted date
+  document.getElementById("submitted-on").classList.remove("hidden");
+  document.getElementById("submitted-date").textContent = new Date(app.submitted_at).toLocaleDateString("en-PK", { year:"numeric", month:"short", day:"numeric" });
+
+  // Highlight pipeline steps
+  for (let i = 1; i <= cfg.step; i++) {
+    const dot = document.getElementById("step" + i);
+    dot.style.background = i < cfg.step ? "#00C896" : cfg.color;
+    dot.style.color = "#fff";
+    dot.textContent = i < cfg.step ? "✓" : i;
+    if (i < 4) document.getElementById("line" + i).style.background = i < cfg.step ? "#00C896" : "#e2e8f0";
+  }
+}
+init();
+</script>
+</body>
+</html>

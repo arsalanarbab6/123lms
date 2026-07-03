@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>How It Works | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .neon-glow{box-shadow:0 0 30px rgba(0,200,150,.3)}
+  .glass{background:rgba(255,255,255,.7);backdrop-filter:blur(12px)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] text-[#001c37]">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm h-20 flex justify-between items-center px-8">
+  <a href="/public/index.html" class="headline font-black text-2xl text-[#0A2540] tracking-tighter">The Neon Academy</a>
+  <div class="hidden md:flex gap-8 text-sm font-bold headline">
+    <a href="/public/courses.html"      class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Courses</a>
+    <a href="/public/how-it-works.html" class="text-[#007BFF] border-b-2 border-[#007BFF] pb-1">Programs</a>
+    <a href="/public/about.html"        class="text-[#0A2540] hover:text-[#007BFF] transition-colors">About</a>
+    <a href="/public/faqs.html"         class="text-[#0A2540] hover:text-[#007BFF] transition-colors">FAQs</a>
+  </div>
+  <div id="nav-auth" class="flex items-center gap-3"></div>
+</nav>
+
+<main class="pt-32 pb-20">
+
+  <!-- HERO -->
+  <header class="max-w-7xl mx-auto px-8 mb-24 grid lg:grid-cols-2 gap-16 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#007BFF]/10 text-[#007BFF] font-bold text-xs uppercase tracking-widest mb-8">
+        <span class="w-2 h-2 rounded-full bg-[#007BFF] animate-pulse"></span>
+        Enrollment Pipeline
+      </div>
+      <h1 class="headline text-6xl md:text-8xl font-black tracking-tighter text-[#0A2540] mb-8 leading-[.9]">
+        Your Future <br/><span class="text-transparent bg-clip-text sig-grad">Encoded.</span>
+      </h1>
+      <p class="text-[#43474d] text-xl leading-relaxed max-w-lg">The CyberEdge journey is a high-octane path from raw talent to certified professional. Engineered for the digital elite.</p>
+    </div>
+    <div class="relative group">
+      <div class="aspect-video rounded-2xl overflow-hidden shadow-2xl">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUl0qCpVNZQ-tFNr3qqwnmWlUNk1U0wHG0TxTE51jyYc3Q6eSCGzesNHBBAsaMHgTR8yhRPcLhy9QHp9R3ns1hU128G6JaZUAP92cqU0B1M9kddIEcaxJoWB1Akyc-59NIVaEZohipEdMJ8z551-pdUNN3NC0O0sgFHw7woWCitwfUa3aClTEeeHTbm0D7C6amg61vsn38IzbloSaQFj-N6mecBiGAAI84JJsk4V7T26PQOy7PPt9LKPIRJMqLIHl9M266npPN394"
+          alt="Team working" class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"/>
+      </div>
+      <div class="absolute -bottom-8 -left-8 glass p-5 rounded-2xl shadow-xl max-w-xs border-l-4 border-l-[#00C896]">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl sig-grad flex items-center justify-center text-white shrink-0">
+            <span class="material-symbols-outlined">bolt</span>
+          </div>
+          <div>
+            <p class="headline font-bold text-[#0A2540]">Fast-Track Entry</p>
+            <p class="text-xs text-[#43474d]">Average process: 14 days</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- STEPS TIMELINE -->
+  <section class="max-w-7xl mx-auto px-8 relative">
+    <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-slate-200 md:-translate-x-1/2"></div>
+    <div class="space-y-24 relative">
+
+      <!-- Step 1 -->
+      <div class="flex flex-col md:flex-row items-center gap-12 group">
+        <div class="w-full md:w-1/2 md:text-right pr-0 md:pr-16 order-2 md:order-1">
+          <div class="headline text-8xl font-black text-slate-100 group-hover:text-[#007BFF]/10 transition-colors leading-none">01</div>
+          <h3 class="headline text-4xl font-bold text-[#0A2540] mt-2">Register</h3>
+          <p class="text-[#43474d] mt-4 text-lg">Initialize your identity. Access the elite portal where your digital legacy begins.</p>
+          <a href="/public/signup.html" class="mt-6 inline-block text-[#007BFF] font-bold text-sm hover:underline">Create Account →</a>
+        </div>
+        <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full sig-grad text-white flex items-center justify-center z-10 neon-glow">
+          <span class="material-symbols-outlined">app_registration</span>
+        </div>
+        <div class="w-full md:w-1/2 pl-0 md:pl-16 order-3">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-shadow">
+            <div class="flex gap-2 mb-3">
+              <span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">SSL SECURE</span>
+              <span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">OAUTH 2.0</span>
+            </div>
+            <p class="text-sm text-[#43474d]">Create your account with email and password. Secure authentication via Supabase Auth.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex flex-col md:flex-row items-center gap-12 group">
+        <div class="w-full md:w-1/2 pl-0 md:pl-16 order-2">
+          <div class="headline text-8xl font-black text-slate-100 group-hover:text-[#00C896]/10 transition-colors leading-none">02</div>
+          <h3 class="headline text-4xl font-bold text-[#0A2540] mt-2">Profile</h3>
+          <p class="text-[#43474d] mt-4 text-lg">Map your cognitive assets. Complete your profile with skills, documents, and specialization.</p>
+        </div>
+        <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full sig-grad text-white flex items-center justify-center z-10 neon-glow">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <div class="w-full md:w-1/2 md:text-right pr-0 md:pr-16 order-1">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-shadow">
+            <p class="text-xs font-bold text-[#00C896] tracking-widest uppercase mb-2">Cognitive Mapping Active</p>
+            <p class="text-sm text-[#43474d]">Fill your profile with your bio, skills, portfolio links, and upload required documents (CNIC, degree, domicile).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex flex-col md:flex-row items-center gap-12 group">
+        <div class="w-full md:w-1/2 md:text-right pr-0 md:pr-16 order-2 md:order-1">
+          <div class="headline text-8xl font-black text-slate-100 group-hover:text-[#007BFF]/10 transition-colors leading-none">03</div>
+          <h3 class="headline text-4xl font-bold text-[#0A2540] mt-2">Apply</h3>
+          <p class="text-[#43474d] mt-4 text-lg">Execute your choice. Secure a spot in high-demand tracks: AI/ML, Cyber Security, Cloud Architecture.</p>
+        </div>
+        <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full sig-grad text-white flex items-center justify-center z-10 neon-glow">
+          <span class="material-symbols-outlined">send</span>
+        </div>
+        <div class="w-full md:w-1/2 pl-0 md:pl-16 order-3">
+          <div class="bg-[#0A2540] p-6 rounded-2xl shadow-xl">
+            <p class="text-[#768dad] text-sm mb-4">Choose from our government-certified programs and submit your application in one click.</p>
+            <a href="/public/courses.html" class="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl headline font-bold text-sm transition-colors uppercase tracking-widest block text-center">Select Program</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="flex flex-col md:flex-row items-center gap-12 group">
+        <div class="w-full md:w-1/2 pl-0 md:pl-16 order-2">
+          <div class="headline text-8xl font-black text-slate-100 group-hover:text-[#00C896]/10 transition-colors leading-none">04</div>
+          <h3 class="headline text-4xl font-bold text-[#0A2540] mt-2">Screening</h3>
+          <p class="text-[#43474d] mt-4 text-lg">Stress-test your skills. MCQ-based online screening test covering IQ, Computing, and English.</p>
+        </div>
+        <div class="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 rounded-full sig-grad text-white flex items-center justify-center z-10 neon-glow">
+          <span class="material-symbols-outlined">shield</span>
+        </div>
+        <div class="w-full md:w-1/2 md:text-right pr-0 md:pr-16 order-1">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-shadow">
+            <div class="flex justify-end items-center gap-2 mb-2">
+              <div class="h-1 flex-1 max-w-[100px] bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full w-4/5 sig-grad"></div>
+              </div>
+              <span class="text-[10px] font-bold text-[#0059bb]">82% COMPATIBILITY</span>
+            </div>
+            <p class="text-sm text-[#43474d]">45-minute timed test. Top performers are shortlisted for enrollment.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Steps 5-7 compact -->
+      <div class="grid md:grid-cols-3 gap-8 pt-12">
+        <div class="md:col-span-2 bg-[#0A2540] rounded-3xl p-10 text-white">
+          <span class="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold tracking-widest uppercase mb-4">Milestone</span>
+          <h4 class="headline text-3xl font-bold mb-4">Shortlisted &amp; Allocated</h4>
+          <p class="opacity-70 text-lg mb-6 max-w-md">Top performers join a cohort led by industry veterans with live sessions 3x per week.</p>
+          <div class="flex -space-x-3">
+            <div class="w-10 h-10 rounded-full border-2 border-[#0A2540] bg-slate-700 flex items-center justify-center text-xs font-bold">AK</div>
+            <div class="w-10 h-10 rounded-full border-2 border-[#0A2540] bg-slate-600 flex items-center justify-center text-xs font-bold">ML</div>
+            <div class="w-10 h-10 rounded-full border-2 border-[#0A2540] sig-grad flex items-center justify-center text-xs font-bold">+12</div>
+          </div>
+        </div>
+        <div class="bg-white p-8 rounded-3xl border border-slate-100 flex flex-col justify-between hover:border-[#00C896]/30 transition-colors">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-[#00C896]/10 text-[#009e76] flex items-center justify-center mb-6">
+              <span class="material-symbols-outlined">model_training</span>
+            </div>
+            <h4 class="headline text-2xl font-bold text-[#0A2540] mb-2">Training</h4>
+            <p class="text-[#43474d] text-sm">12-week intensive program with live labs, recorded lectures, and weekly assignments.</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between text-xs font-bold text-[#009e76]">
+            <span>LEARNING PATH: ACTIVE</span>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Launch -->
+      <div class="relative py-24 text-center max-w-3xl mx-auto">
+        <div class="mb-12 inline-flex w-24 h-24 rounded-3xl sig-grad items-center justify-center text-white text-5xl shadow-2xl animate-bounce">
+          <span class="material-symbols-outlined" style="font-size:48px">rocket_launch</span>
+        </div>
+        <h2 class="headline text-6xl md:text-7xl font-black text-[#0A2540] mb-6">Launch.</h2>
+        <p class="text-[#43474d] text-xl leading-relaxed mb-12">Government-backed certificate + access to exclusive career placement network. Your transformation is complete.</p>
+        <a href="/public/signup.html" class="sig-grad text-white px-12 py-5 rounded-2xl headline font-bold text-xl hover:scale-105 transition-transform shadow-xl inline-block">
+          Initialize Enrollment
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-[#0A2540] text-white w-full py-12 px-8 border-t border-white/10">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <span class="headline font-bold text-lg">The Neon Academy</span>
+    <div class="flex gap-8 text-sm text-slate-400">
+      <a href="/public/faqs.html"    class="hover:text-[#009e76] transition-colors">FAQs</a>
+      <a href="/public/contact.html" class="hover:text-[#009e76] transition-colors">Contact</a>
+      <a href="#"                    class="hover:text-[#009e76] transition-colors">Privacy Policy</a>
+    </div>
+    <p class="text-slate-400 text-sm">© 2024 The Neon Academy. Government Digital Initiative.</p>
+  </div>
+</footer>
+
+<script>setupNav();</script>
+</body>
+</html>

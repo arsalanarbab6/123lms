@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Profile | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .skill-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .85rem;border-radius:999px;background:#dce9ff;color:#0059bb;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s}
+  .skill-tag.selected{background:linear-gradient(135deg,#007BFF,#00C896);color:#fff}
+  input[type=range]{accent-color:#007BFF}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+
+<!-- TOP NAV with progress -->
+<header class="bg-[#0A2540] px-8 py-4 sticky top-0 z-50">
+  <div class="max-w-4xl mx-auto flex items-center justify-between">
+    <a href="/public/index.html" class="headline font-black text-xl text-white tracking-tighter">CyberEdge Academy</a>
+    <div class="hidden md:flex items-center gap-2 text-[#768dad] text-sm font-bold">
+      <span class="w-6 h-6 rounded-full bg-[#00C896]/20 text-[#00C896] text-xs flex items-center justify-center">✓</span> Register
+      <span class="material-symbols-outlined text-sm">chevron_right</span>
+      <span class="w-6 h-6 rounded-full bg-[#00C896]/20 text-[#00C896] text-xs flex items-center justify-center">✓</span> Verify
+      <span class="material-symbols-outlined text-sm">chevron_right</span>
+      <span class="w-6 h-6 rounded-full sig-grad text-white text-xs flex items-center justify-center font-bold">3</span>
+      <span class="text-white font-bold">Profile</span>
+      <span class="material-symbols-outlined text-sm">chevron_right</span>
+      <span class="w-6 h-6 rounded-full bg-white/10 text-xs flex items-center justify-center">4</span> Docs
+    </div>
+  </div>
+  <!-- Progress bar -->
+  <div class="max-w-4xl mx-auto mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
+    <div class="h-full sig-grad rounded-full transition-all duration-500" id="progress-bar" style="width:0%"></div>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-12">
+
+  <!-- HEADER -->
+  <div class="mb-10 text-center">
+    <div class="inline-flex w-16 h-16 rounded-2xl sig-grad items-center justify-center shadow-xl mb-6">
+      <span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">person</span>
+    </div>
+    <h1 class="headline text-4xl font-bold text-[#0A2540] mb-2">Craft Your Digital Identity</h1>
+    <p class="text-[#43474d]">Build your profile to unlock access to the best-matched programs.</p>
+  </div>
+
+  <form id="profileForm" class="space-y-8" onsubmit="return false;">
+
+    <!-- SECTION 1 — Basic Info -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">badge</span> Basic Information
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Full Name *</label>
+          <input id="p-name" required type="text" placeholder="Your full name"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Phone Number *</label>
+          <input id="p-phone" required type="tel" placeholder="+92 300 1234567"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">City *</label>
+          <input id="p-city" required type="text" placeholder="Peshawar"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Date of Birth *</label>
+          <input id="p-dob" required type="date"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Gender</label>
+          <select id="p-gender"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all">
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">District of Domicile *</label>
+          <select id="p-district" required
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all">
+            <option value="">Select district</option>
+            <option>Peshawar</option><option>Mardan</option><option>Swat</option><option>Abbottabad</option>
+            <option>Kohat</option><option>Bannu</option><option>Dera Ismail Khan</option>
+            <option>Nowshera</option><option>Charsadda</option><option>Mansehra</option>
+            <option>Dir (Upper)</option><option>Dir (Lower)</option><option>Chitral</option>
+            <option>Shangla</option><option>Buner</option><option>Malakand</option>
+            <option>Haripur</option><option>Swabi</option><option>Karak</option>
+            <option>Lakki Marwat</option><option>Tank</option><option>Hangu</option>
+            <option>Kurram</option><option>Orakzai</option><option>North Waziristan</option>
+            <option>South Waziristan</option><option>Bajaur</option><option>Khyber</option>
+            <option>Mohmand</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 — Education -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">school</span> Education
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Degree / Qualification *</label>
+          <select id="p-degree" required
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all">
+            <option value="">Select qualification</option>
+            <option>Matric (10th Grade)</option>
+            <option>Intermediate (12th Grade / FA/FSc)</option>
+            <option>Bachelor's Degree (14 Years)</option>
+            <option>Master's Degree (16 Years)</option>
+            <option>MS/MPhil</option>
+            <option>PhD</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Field of Study *</label>
+          <input id="p-field" required type="text" placeholder="e.g. Computer Science, Business"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">University / Institution *</label>
+          <input id="p-uni" required type="text" placeholder="Name of institution"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Graduation Year</label>
+          <input id="p-gradyear" type="number" min="2000" max="2030" placeholder="2024"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 transition-all"/>
+        </div>
+      </div>
+      <div class="mt-6">
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input id="p-finalyear" type="checkbox" class="w-5 h-5 accent-[#007BFF]"/>
+          <span class="text-sm font-bold text-[#0A2540]">I am currently in Final Year (will provide transcript)</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- SECTION 3 — Digital Links -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">link</span> Digital Nodes (Optional)
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">LinkedIn</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#0059bb] font-bold text-sm">in/</span>
+            <input id="p-linkedin" type="text" placeholder="username"
+              class="w-full pl-10 pr-4 py-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all"/>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Portfolio / GitHub</label>
+          <input id="p-portfolio" type="url" placeholder="https://yoursite.com"
+            class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-[#43474d] block mb-2">Twitter / X</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#43474d] font-bold text-sm">@</span>
+            <input id="p-twitter" type="text" placeholder="handle"
+              class="w-full pl-10 pr-4 py-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] transition-all"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 — Skills -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-2 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">psychology</span> Technical Expertise
+      </h2>
+      <p class="text-sm text-[#43474d] mb-6">Select all skills that apply.</p>
+      <div class="space-y-6">
+        <div>
+          <h4 class="headline font-bold text-sm text-[#0A2540] mb-3 uppercase tracking-widest">Cyber Defense</h4>
+          <div class="flex flex-wrap gap-2" id="skills-cyber">
+            <span class="skill-tag" onclick="toggleSkill(this)">Network Security</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Penetration Testing</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Ethical Hacking</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">SIEM/SOC</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Digital Forensics</span>
+          </div>
+        </div>
+        <div>
+          <h4 class="headline font-bold text-sm text-[#0A2540] mb-3 uppercase tracking-widest">Development</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-tag" onclick="toggleSkill(this)">Python</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">JavaScript</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">React</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Node.js</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">SQL</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">HTML/CSS</span>
+          </div>
+        </div>
+        <div>
+          <h4 class="headline font-bold text-sm text-[#0A2540] mb-3 uppercase tracking-widest">Data & AI</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-tag" onclick="toggleSkill(this)">Machine Learning</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Data Analysis</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">TensorFlow</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Big Data</span>
+            <span class="skill-tag" onclick="toggleSkill(this)">Cloud Computing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 — Personal Statement -->
+    <div class="bg-white rounded-2xl p-8 border border-[#e5eeff] shadow-sm">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">edit_note</span> Personal Statement (Optional)
+      </h2>
+      <textarea id="p-bio" rows="5" placeholder="I am a security-focused developer with a passion for..."
+        class="w-full p-4 bg-[#f8f9ff] border border-[#e5eeff] rounded-xl focus:outline-none focus:border-[#007BFF] focus:ring-2 focus:ring-[#007BFF]/10 resize-none transition-all"></textarea>
+      <p class="text-xs text-[#768dad] mt-2">Briefly describe your background, interests, and career goals. (Max 500 characters)</p>
+    </div>
+
+    <!-- ERROR / SUCCESS -->
+    <p id="form-err" class="text-red-500 text-sm hidden text-center"></p>
+    <p id="form-suc" class="text-[#009e76] text-sm hidden text-center"></p>
+
+    <!-- SUBMIT -->
+    <div class="flex gap-4">
+      <button type="button" onclick="saveProfile(false)"
+        class="flex-1 border-2 border-[#e5eeff] text-[#0A2540] headline font-bold py-4 rounded-xl hover:bg-[#f0f4ff] transition-all">
+        Save Draft
+      </button>
+      <button type="button" onclick="saveProfile(true)"
+        class="flex-1 sig-grad text-white headline font-bold py-4 rounded-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="save-btn">
+        Save & Continue <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </div>
+  </form>
+</main>
+
+<script>
+let selectedSkills = [];
+
+function toggleSkill(el) {
+  el.classList.toggle("selected");
+  const skill = el.textContent.trim();
+  if (el.classList.contains("selected")) {
+    selectedSkills.push(skill);
+  } else {
+    selectedSkills = selectedSkills.filter(s => s !== skill);
+  }
+  updateProgress();
+}
+
+// Progress bar
+function updateProgress() {
+  const fields = ["p-name","p-phone","p-city","p-dob","p-district","p-degree","p-field","p-uni"];
+  const filled = fields.filter(id => document.getElementById(id)?.value.trim()).length;
+  const pct = Math.round((filled / fields.length) * 100);
+  document.getElementById("progress-bar").style.width = pct + "%";
+}
+document.querySelectorAll("input,select,textarea").forEach(el => el.addEventListener("input", updateProgress));
+
+async function init() {
+  const user = await requireAuth("/public/login.html");
+  if (!user) return;
+  // Pre-fill if profile exists
+  const profile = await getProfile(user.id);
+  if (profile) {
+    if (profile.full_name) document.getElementById("p-name").value = profile.full_name;
+    if (profile.phone)     document.getElementById("p-phone").value = profile.phone;
+  }
+  updateProgress();
+}
+init();
+
+async function saveProfile(redirect) {
+  const btn = document.getElementById("save-btn");
+  const errEl = document.getElementById("form-err");
+  const sucEl = document.getElementById("form-suc");
+  errEl.classList.add("hidden"); sucEl.classList.add("hidden");
+
+  const name     = document.getElementById("p-name").value.trim();
+  const phone    = document.getElementById("p-phone").value.trim();
+  const city     = document.getElementById("p-city").value.trim();
+  const dob      = document.getElementById("p-dob").value;
+  const district = document.getElementById("p-district").value;
+  const degree   = document.getElementById("p-degree").value;
+  const field    = document.getElementById("p-field").value.trim();
+  const uni      = document.getElementById("p-uni").value.trim();
+
+  if (!name || !phone || !city || !dob || !district || !degree || !field || !uni) {
+    errEl.textContent = "Please fill all required (*) fields.";
+    errEl.classList.remove("hidden"); return;
+  }
+
+  btn.disabled = true; btn.textContent = "Saving...";
+
+  const user = await getUser();
+  const { error } = await sb.from("profiles").update({
+    full_name: name,
+    phone,
+    city,
+    date_of_birth: dob,
+    district,
+    gender: document.getElementById("p-gender").value,
+    education_degree: degree,
+    education_field: field,
+    education_institution: uni,
+    graduation_year: document.getElementById("p-gradyear").value || null,
+    is_final_year: document.getElementById("p-finalyear").checked,
+    linkedin: document.getElementById("p-linkedin").value.trim(),
+    portfolio: document.getElementById("p-portfolio").value.trim(),
+    twitter: document.getElementById("p-twitter").value.trim(),
+    skills: selectedSkills,
+    bio: document.getElementById("p-bio").value.trim(),
+    updated_at: new Date().toISOString(),
+  }).eq("id", user.id);
+
+  btn.disabled = false;
+  btn.innerHTML = `Save & Continue <span class="material-symbols-outlined">arrow_forward</span>`;
+
+  if (error) {
+    errEl.textContent = error.message; errEl.classList.remove("hidden"); return;
+  }
+
+  if (redirect) {
+    window.location.href = "/public/document-upload.html";
+  } else {
+    sucEl.textContent = "Draft saved!"; sucEl.classList.remove("hidden");
+    setTimeout(() => sucEl.classList.add("hidden"), 2000);
+  }
+}
+</script>
+</body>
+</html>

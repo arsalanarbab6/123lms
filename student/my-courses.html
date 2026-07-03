@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Courses | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+  .sidebar-link:hover{background:#eff4ff;color:#007BFF}
+  .sidebar-link.active{background:#dce9ff;color:#007BFF}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 sig-grad rounded-xl flex items-center justify-center text-white">
+        <span class="material-symbols-outlined">architecture</span>
+      </div>
+      <div>
+        <a href="/public/index.html" class="headline font-extrabold text-[#0A2540] leading-none block">CyberEdge</a>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400">Student Portal</p>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"        class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"        class="sidebar-link active"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/assignments.html"       class="sidebar-link"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+      <a href="/student/attendance.html"        class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/student/quizzes.html"           class="sidebar-link"><span class="material-symbols-outlined">quiz</span>Quizzes</a>
+      <a href="/student/results.html"           class="sidebar-link"><span class="material-symbols-outlined">leaderboard</span>Results</a>
+      <a href="/student/learning-progress.html" class="sidebar-link"><span class="material-symbols-outlined">trending_up</span>Progress</a>
+      <a href="/student/notifications.html"     class="sidebar-link"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"           class="sidebar-link"><span class="material-symbols-outlined">person</span>Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4 space-y-1">
+      <a href="/public/courses.html" class="sidebar-link"><span class="material-symbols-outlined">add_circle</span>Browse Courses</a>
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 p-8">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="headline text-3xl font-bold text-[#0A2540]">My Courses</h1>
+        <p class="text-[#43474d] mt-1" id="enroll-count">Loading your enrolled programs...</p>
+      </div>
+      <a href="/public/courses.html" class="sig-grad text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2">
+        <span class="material-symbols-outlined">add</span> Enroll More
+      </a>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="flex gap-2 mb-8">
+      <button data-filter="all"       class="filter-btn active-filter px-4 py-2 rounded-full text-sm font-bold bg-[#0A2540] text-white">All</button>
+      <button data-filter="active"    class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Active</button>
+      <button data-filter="completed" class="filter-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Completed</button>
+    </div>
+
+    <!-- Course grid -->
+    <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <p class="text-slate-400 col-span-3 text-center py-16">Loading...</p>
+    </div>
+  </main>
+</div>
+
+<!-- Mobile bottom nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl flex justify-around items-center py-3 border-t border-slate-100 z-50">
+  <a href="/student/dashboard.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">grid_view</span><span class="text-[10px] font-bold">Home</span></a>
+  <a href="/student/my-courses.html" class="flex flex-col items-center gap-1 text-[#007BFF]"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">auto_stories</span><span class="text-[10px] font-bold">Courses</span></a>
+  <a href="/student/assignments.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">assignment</span><span class="text-[10px] font-bold">Tasks</span></a>
+  <a href="/student/notifications.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">notifications</span><span class="text-[10px] font-bold">Alerts</span></a>
+  <a href="/student/profile.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="material-symbols-outlined">person</span><span class="text-[10px] font-bold">Profile</span></a>
+</nav>
+
+<script>
+let allEnrollments = [];
+
+async function init() {
+  const user = await requireAuth("/public/login.html");
+  if (!user) return;
+
+  const { data, error } = await sb
+    .from("enrollments")
+    .select("*, courses(*)")
+    .eq("student_id", user.id)
+    .order("enrolled_at", { ascending: false });
+
+  if (error) { document.getElementById("course-grid").innerHTML = `<p class="text-red-500 col-span-3">${error.message}</p>`; return; }
+
+  allEnrollments = data;
+  document.getElementById("enroll-count").textContent = `${data.length} program${data.length !== 1 ? "s" : ""} enrolled`;
+  renderCourses(data);
+}
+
+function renderCourses(list) {
+  const grid = document.getElementById("course-grid");
+  if (!list.length) {
+    grid.innerHTML = `<div class="col-span-3 text-center py-16">
+      <p class="text-slate-400 text-lg mb-4">No courses found.</p>
+      <a href="/public/courses.html" class="sig-grad text-white font-bold px-6 py-3 rounded-xl inline-block">Browse Courses</a>
+    </div>`; return;
+  }
+  grid.innerHTML = list.map(e => `
+    <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg transition-all group">
+      <div class="relative h-44 overflow-hidden">
+        <img src="${e.courses?.image_url || 'https://placehold.co/400x200/0A2540/ffffff?text=' + encodeURIComponent(e.courses?.title || '')}"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0A2540]/70 to-transparent"></div>
+        <div class="absolute bottom-3 left-3">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${e.status === 'completed' ? 'bg-[#00C896] text-white' : 'bg-[#007BFF] text-white'}">${e.status}</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="text-[10px] font-bold text-[#007BFF] uppercase tracking-widest mb-1">${e.courses?.category || ''}</p>
+        <h3 class="headline font-bold text-lg text-[#0A2540] mb-3 leading-tight">${e.courses?.title || 'Course'}</h3>
+        <div class="mb-4">
+          <div class="flex justify-between text-xs font-bold mb-1.5">
+            <span class="text-slate-400">Progress</span>
+            <span class="text-[#007BFF]">${e.progress_percent || 0}%</span>
+          </div>
+          <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full sig-grad rounded-full transition-all" style="width:${e.progress_percent || 0}%"></div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <a href="/student/course-dashboard.html?id=${e.course_id}"
+            class="flex-1 sig-grad text-white font-bold py-2.5 rounded-xl text-sm text-center">Continue</a>
+          <a href="/student/assignments.html?course=${e.course_id}"
+            class="px-3 py-2.5 bg-[#eff4ff] text-[#007BFF] rounded-xl">
+            <span class="material-symbols-outlined text-sm">assignment</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Filter tabs
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => {
+      b.classList.remove("bg-[#0A2540]","text-white");
+      b.classList.add("bg-white","border","border-slate-200","text-slate-600");
+    });
+    btn.classList.add("bg-[#0A2540]","text-white");
+    btn.classList.remove("bg-white","border","border-slate-200","text-slate-600");
+    const f = btn.dataset.filter;
+    renderCourses(f === "all" ? allEnrollments : allEnrollments.filter(e => e.status === f));
+  });
+});
+
+init();
+</script>
+</body>
+</html>

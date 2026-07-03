@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>User Management | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+  .sidebar-link:hover{background:rgba(255,255,255,.08);color:#fff}
+  .sidebar-link.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+    <div class="px-6 mb-10">
+      <a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/admin/dashboard.html"    class="sidebar-link"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">grid_view</span>Dashboard</a>
+      <a href="/admin/courses.html"      class="sidebar-link"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+      <a href="/admin/users.html"        class="sidebar-link active"><span class="material-symbols-outlined">people</span>Users</a>
+      <a href="/admin/applications.html" class="sidebar-link"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+      <a href="/admin/enrollments.html"  class="sidebar-link"><span class="material-symbols-outlined">how_to_reg</span>Enrollments</a>
+      <a href="/admin/attendance.html"   class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/admin/announcements.html" class="sidebar-link"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-white/10 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-900/20">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col">
+    <header class="bg-white shadow-sm sticky top-0 z-40 flex justify-between items-center px-8 py-4">
+      <div>
+        <h1 class="headline font-black text-xl text-[#0A2540]">User Management</h1>
+        <p class="text-slate-400 text-xs">All registered accounts. Change roles by using the dropdown in each row.</p>
+      </div>
+    </header>
+
+    <div class="p-8">
+      <div class="bg-white rounded-xl border border-slate-100 p-4 flex gap-4 mb-6">
+        <input id="search" type="text" placeholder="Search by name or email..." oninput="filterTable()"
+          class="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#007BFF]"/>
+        <select id="filter-role" onchange="filterTable()" class="border border-slate-200 rounded-lg px-4 py-2 text-sm">
+          <option value="">All Roles</option>
+          <option value="student">Students</option>
+          <option value="instructor">Instructors</option>
+          <option value="admin">Admins</option>
+        </select>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs uppercase font-bold text-slate-500">
+            <tr>
+              <th class="p-4">User</th>
+              <th class="p-4 hidden md:table-cell">Email</th>
+              <th class="p-4 hidden md:table-cell">Joined</th>
+              <th class="p-4">Role</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="4" class="p-10 text-center text-slate-400">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-slate-400 mt-3" id="user-count"></p>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let allUsers = [];
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = type === "success" ? "#00C896" : "#ef4444";
+  t.style.opacity = "1";
+  setTimeout(() => { t.style.opacity = "0"; }, 3000);
+}
+
+async function init() {
+  await requireRole(["admin"], "/student/dashboard.html");
+  const { data, error } = await sb.from("profiles").select("*").order("created_at", { ascending: false });
+  if (error) { showToast(error.message, "error"); return; }
+  allUsers = data;
+  renderTable(data);
+}
+
+function renderTable(data) {
+  document.getElementById("user-count").textContent = `Showing ${data.length} users`;
+  const tbody = document.getElementById("users-tbody");
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No users found.</td></tr>`;
+    return;
+  }
+  const roleColors = { student: "bg-[#eff4ff] text-[#007BFF]", instructor: "bg-green-50 text-green-700", admin: "bg-red-50 text-red-600" };
+  tbody.innerHTML = data.map(u => `
+    <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+      <td class="p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full sig-grad flex items-center justify-center text-white font-bold text-xs headline flex-shrink-0">
+            ${(u.full_name || u.email || "?").split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2)}
+          </div>
+          <p class="font-bold text-[#0A2540]">${u.full_name || "-"}</p>
+        </div>
+      </td>
+      <td class="p-4 text-slate-500 hidden md:table-cell">${u.email}</td>
+      <td class="p-4 text-slate-400 text-xs hidden md:table-cell">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td class="p-4">
+        <select onchange="changeRole('${u.id}', this.value)"
+          class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold ${roleColors[u.role] || ''} focus:outline-none focus:border-[#007BFF]">
+          <option value="student"    ${u.role === 'student'    ? 'selected' : ''}>Student</option>
+          <option value="instructor" ${u.role === 'instructor' ? 'selected' : ''}>Instructor</option>
+          <option value="admin"      ${u.role === 'admin'      ? 'selected' : ''}>Admin</option>
+        </select>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function filterTable() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const role   = document.getElementById("filter-role").value;
+  renderTable(allUsers.filter(u => {
+    const matchS = (u.full_name || "").toLowerCase().includes(search) || u.email.toLowerCase().includes(search);
+    const matchR = role === "" || u.role === role;
+    return matchS && matchR;
+  }));
+}
+
+async function changeRole(userId, role) {
+  const { error } = await sb.from("profiles").update({ role }).eq("id", userId);
+  if (error) { showToast(error.message, "error"); return; }
+  // update local copy
+  const idx = allUsers.findIndex(u => u.id === userId);
+  if (idx !== -1) allUsers[idx].role = role;
+  showToast(`Role updated to ${role}`);
+}
+
+init();
+</script>
+</body>
+</html>

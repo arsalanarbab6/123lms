@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Notifications | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+  .sidebar-link:hover{background:#eff4ff;color:#007BFF}
+  .sidebar-link.active{background:#dce9ff;color:#007BFF}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 sig-grad rounded-xl flex items-center justify-center text-white"><span class="material-symbols-outlined">architecture</span></div>
+      <div><a href="/public/index.html" class="headline font-extrabold text-[#0A2540] leading-none block">CyberEdge</a><p class="text-[10px] uppercase tracking-widest text-slate-400">Student Portal</p></div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"    class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"   class="sidebar-link"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/assignments.html"  class="sidebar-link"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+      <a href="/student/attendance.html"   class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/student/quizzes.html"      class="sidebar-link"><span class="material-symbols-outlined">quiz</span>Quizzes</a>
+      <a href="/student/results.html"      class="sidebar-link"><span class="material-symbols-outlined">leaderboard</span>Results</a>
+      <a href="/student/notifications.html" class="sidebar-link active"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"      class="sidebar-link"><span class="material-symbols-outlined">person</span>Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50"><span class="material-symbols-outlined">logout</span>Logout</button>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-8 max-w-4xl">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="headline text-3xl font-bold text-[#0A2540]">Inbox</h1>
+        <p class="text-[#43474d] mt-1" id="unread-count">Loading notifications...</p>
+      </div>
+      <button onclick="markAllRead()" class="text-[#007BFF] font-bold text-sm hover:underline">Mark all read</button>
+    </div>
+
+    <!-- Category filter -->
+    <div class="flex gap-2 mb-6 flex-wrap">
+      <button data-cat="all"    class="cat-btn active-cat px-4 py-2 rounded-full text-sm font-bold bg-[#0A2540] text-white">All</button>
+      <button data-cat="system" class="cat-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">System</button>
+      <button data-cat="course" class="cat-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Course</button>
+      <button data-cat="alert"  class="cat-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Alerts</button>
+    </div>
+
+    <div id="notif-list" class="space-y-3">
+      <p class="text-slate-400 text-center py-10">Loading...</p>
+    </div>
+  </main>
+</div>
+
+<script>
+let currentUser = null;
+let allNotifs = [];
+
+const catIcons = { system:"settings", course:"auto_stories", alert:"warning", grade:"leaderboard", default:"notifications" };
+const catColors = { system:"#007BFF", course:"#009e76", alert:"#f59e0b", grade:"#00C896", default:"#768dad" };
+
+async function init() {
+  currentUser = await requireAuth("/public/login.html");
+  if (!currentUser) return;
+  loadNotifications("all");
+}
+
+async function loadNotifications(cat) {
+  let q = sb.from("notifications").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
+  if (cat !== "all") q = q.eq("category", cat);
+
+  const { data, error } = await q;
+  allNotifs = data || [];
+
+  const unread = allNotifs.filter(n => !n.is_read).length;
+  document.getElementById("unread-count").textContent = unread > 0 ? `${unread} unread notification${unread > 1 ? "s" : ""}` : "All caught up!";
+
+  const list = document.getElementById("notif-list");
+
+  if (!allNotifs.length) {
+    list.innerHTML = `
+      <div class="text-center py-20">
+        <span class="material-symbols-outlined text-6xl text-slate-200 block mb-4">notifications_off</span>
+        <p class="headline font-bold text-[#0A2540] text-xl mb-2">No notifications yet</p>
+        <p class="text-slate-400">You're all caught up. Notifications will appear here.</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = allNotifs.map(n => `
+    <div onclick="markRead('${n.id}', this)"
+      class="bg-white rounded-2xl border ${!n.is_read ? 'border-[#007BFF]/20 shadow-md' : 'border-slate-100 shadow-sm'} p-5 flex items-start gap-4 cursor-pointer hover:shadow-lg transition-all">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+        style="background:${catColors[n.category] || catColors.default}20">
+        <span class="material-symbols-outlined" style="color:${catColors[n.category] || catColors.default};font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">
+          ${catIcons[n.category] || catIcons.default}
+        </span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="font-bold text-[#0A2540] ${!n.is_read ? '' : 'opacity-70'}">${n.title}</h3>
+          ${!n.is_read ? '<span class="w-2.5 h-2.5 rounded-full bg-[#007BFF] flex-shrink-0 mt-1.5"></span>' : ''}
+        </div>
+        <p class="text-sm text-[#43474d] mt-1">${n.message || ''}</p>
+        <p class="text-xs text-slate-400 mt-2">${timeAgo(n.created_at)}</p>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function markRead(id, el) {
+  await sb.from("notifications").update({ is_read: true }).eq("id", id);
+  el.classList.remove("border-[#007BFF]/20","shadow-md");
+  el.classList.add("border-slate-100","shadow-sm");
+  el.querySelector(".w-2\\.5")?.remove();
+}
+
+async function markAllRead() {
+  await sb.from("notifications").update({ is_read: true }).eq("user_id", currentUser.id);
+  document.getElementById("unread-count").textContent = "All caught up!";
+  init();
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff/60000);
+  if (mins < 1)  return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins/60);
+  if (hrs < 24)  return `${hrs}h ago`;
+  return new Date(iso).toLocaleDateString();
+}
+
+document.querySelectorAll(".cat-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".cat-btn").forEach(b => {
+      b.classList.remove("bg-[#0A2540]","text-white");
+      b.classList.add("bg-white","border","border-slate-200","text-slate-600");
+    });
+    btn.classList.add("bg-[#0A2540]","text-white");
+    btn.classList.remove("bg-white","border","border-slate-200","text-slate-600");
+    loadNotifications(btn.dataset.cat);
+  });
+});
+
+init();
+</script>
+</body>
+</html>

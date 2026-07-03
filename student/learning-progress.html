@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learning Progress | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+  .sidebar-link:hover{background:#eff4ff;color:#007BFF}
+  .sidebar-link.active{background:#dce9ff;color:#007BFF}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 sig-grad rounded-xl flex items-center justify-center text-white"><span class="material-symbols-outlined">architecture</span></div>
+      <div><a href="/public/index.html" class="headline font-extrabold text-[#0A2540] leading-none block">CyberEdge</a><p class="text-[10px] uppercase tracking-widest text-slate-400">Student Portal</p></div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"        class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"        class="sidebar-link"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/assignments.html"       class="sidebar-link"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+      <a href="/student/attendance.html"        class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/student/results.html"           class="sidebar-link"><span class="material-symbols-outlined">leaderboard</span>Results</a>
+      <a href="/student/learning-progress.html" class="sidebar-link active"><span class="material-symbols-outlined">trending_up</span>Progress</a>
+      <a href="/student/notifications.html"     class="sidebar-link"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"           class="sidebar-link"><span class="material-symbols-outlined">person</span>Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50"><span class="material-symbols-outlined">logout</span>Logout</button>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-8">
+    <div class="mb-8">
+      <h1 class="headline text-3xl font-bold text-[#0A2540]">Learning Progress</h1>
+      <p class="text-[#43474d] mt-1">Your comprehensive performance analytics.</p>
+    </div>
+
+    <!-- Journey Map — course progress bars -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8 mb-6">
+      <h4 class="headline font-bold text-2xl text-[#0A2540] mb-6">Journey Map</h4>
+      <div id="journey-map" class="space-y-6">
+        <p class="text-slate-400">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#007BFF] block mb-2">auto_stories</span>
+        <p class="headline text-3xl font-black text-[#0A2540]" id="p-courses">-</p>
+        <p class="text-xs text-slate-400 font-bold mt-1">Enrolled Courses</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#009e76] block mb-2">task_alt</span>
+        <p class="headline text-3xl font-black text-[#0A2540]" id="p-complete">-</p>
+        <p class="text-xs text-slate-400 font-bold mt-1">Completed</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#f59e0b] block mb-2">assignment_turned_in</span>
+        <p class="headline text-3xl font-black text-[#0A2540]" id="p-subs">-</p>
+        <p class="text-xs text-slate-400 font-bold mt-1">Submissions</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#00C896] block mb-2">event_available</span>
+        <p class="headline text-3xl font-black text-[#0A2540]" id="p-att">-%</p>
+        <p class="text-xs text-slate-400 font-bold mt-1">Avg Attendance</p>
+      </div>
+    </div>
+
+    <!-- Unlocked Badges -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8">
+      <h4 class="headline font-bold text-2xl text-[#0A2540] mb-6">Unlocked Badges</h4>
+      <div id="badges-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- generated -->
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const BADGES = [
+  {icon:"rocket_launch", label:"Early Adopter",  desc:"Enrolled in first 100 students", unlocked:true,  color:"#007BFF"},
+  {icon:"verified",      label:"First Submit",    desc:"Submitted first assignment",     unlocked:true,  color:"#009e76"},
+  {icon:"local_fire_department", label:"On Fire", desc:"7-day learning streak",          unlocked:false, color:"#f59e0b"},
+  {icon:"workspace_premium",    label:"Graduate", desc:"Completed a full course",        unlocked:false, color:"#00C896"},
+  {icon:"groups",        label:"Team Player",     desc:"Posted in discussion forum",     unlocked:false, color:"#007BFF"},
+  {icon:"leaderboard",   label:"Top Scorer",      desc:"Scored 90%+ in an assessment",  unlocked:false, color:"#f59e0b"},
+  {icon:"event_available","label":"Perfect Attendance", desc:"100% attendance in a month", unlocked:false, color:"#009e76"},
+  {icon:"auto_stories",  label:"Course Complete", desc:"Finished all modules",           unlocked:false, color:"#00C896"},
+];
+
+async function init() {
+  const user = await requireAuth("/public/login.html");
+  if (!user) return;
+
+  const [
+    { data: enrollments },
+    { data: submissions },
+    { data: attendance },
+  ] = await Promise.all([
+    sb.from("enrollments").select("*, courses(title)").eq("student_id", user.id),
+    sb.from("submissions").select("id").eq("student_id", user.id),
+    sb.from("attendance").select("status").eq("student_id", user.id),
+  ]);
+
+  const completed = (enrollments || []).filter(e => e.status === "completed");
+  const present   = (attendance || []).filter(a => a.status === "present");
+  const attPct    = attendance?.length ? Math.round(present.length / attendance.length * 100) : 0;
+
+  document.getElementById("p-courses").textContent  = enrollments?.length || 0;
+  document.getElementById("p-complete").textContent = completed.length;
+  document.getElementById("p-subs").textContent     = submissions?.length || 0;
+  document.getElementById("p-att").textContent      = attPct + "%";
+
+  // Journey map
+  const jm = document.getElementById("journey-map");
+  if (!enrollments?.length) {
+    jm.innerHTML = `<p class="text-slate-400">No courses enrolled yet. <a href="/public/courses.html" class="text-[#007BFF] font-bold">Browse courses</a></p>`;
+  } else {
+    jm.innerHTML = enrollments.map(e => `
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <p class="font-bold text-[#0A2540] text-sm">${e.courses?.title || "Course"}</p>
+          <span class="text-xs font-bold ${e.status === "completed" ? "text-[#009e76]" : "text-[#007BFF]"}">${e.progress_percent || 0}%</span>
+        </div>
+        <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full sig-grad rounded-full transition-all duration-700" style="width:${e.progress_percent || 0}%"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-1 capitalize">${e.status}</p>
+      </div>
+    `).join("");
+  }
+
+  // Badges
+  const hasSubs     = (submissions?.length || 0) > 0;
+  const hasComplete = completed.length > 0;
+  BADGES[1].unlocked = hasSubs;
+  BADGES[3].unlocked = hasComplete;
+
+  document.getElementById("badges-grid").innerHTML = BADGES.map(b => `
+    <div class="p-5 rounded-2xl text-center ${b.unlocked ? 'bg-[#eff4ff]' : 'bg-slate-50 opacity-50'} border ${b.unlocked ? 'border-[#dce9ff]' : 'border-slate-100'}">
+      <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center ${b.unlocked ? '' : 'grayscale'}"
+        style="background:${b.color}20">
+        <span class="material-symbols-outlined text-3xl" style="color:${b.unlocked ? b.color : '#94a3b8'};font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">
+          ${b.icon}
+        </span>
+      </div>
+      <p class="headline font-bold text-sm text-[#0A2540] mb-1">${b.label}</p>
+      <p class="text-[10px] text-slate-400">${b.desc}</p>
+      ${b.unlocked ? '<span class="text-[10px] font-bold text-[#009e76]">UNLOCKED ✓</span>' : '<span class="text-[10px] font-bold text-slate-300">LOCKED</span>'}
+    </div>
+  `).join("");
+}
+init();
+</script>
+</body>
+</html>

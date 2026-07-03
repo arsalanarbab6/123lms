@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+  .sidebar-link:hover{background:rgba(255,255,255,.08);color:#fff}
+  .sidebar-link.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+    <div class="px-6 mb-10">
+      <a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a>
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1">Management Portal</p>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/admin/dashboard.html"    class="sidebar-link active"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">grid_view</span>Dashboard</a>
+      <a href="/admin/courses.html"      class="sidebar-link"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+      <a href="/admin/users.html"        class="sidebar-link"><span class="material-symbols-outlined">people</span>Users</a>
+      <a href="/admin/applications.html" class="sidebar-link"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+      <a href="/admin/enrollments.html"  class="sidebar-link"><span class="material-symbols-outlined">how_to_reg</span>Enrollments</a>
+      <a href="/admin/attendance.html"   class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/admin/announcements.html" class="sidebar-link"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+      <a href="/admin/settings.html"     class="sidebar-link"><span class="material-symbols-outlined">settings</span>Settings</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-white/10 pt-4 space-y-1">
+      <div class="flex items-center gap-3 px-4 py-3">
+        <div class="w-8 h-8 sig-grad rounded-full flex items-center justify-center text-white font-bold text-xs headline" id="admin-initials">A</div>
+        <div><p class="text-white text-sm font-bold" id="admin-name">Admin</p><p class="text-slate-500 text-xs">Administrator</p></div>
+      </div>
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-900/20 hover:text-red-300">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex flex-col">
+    <header class="bg-white shadow-sm sticky top-0 z-40 flex justify-between items-center px-8 py-4">
+      <div>
+        <h1 class="headline font-black text-xl text-[#0A2540]">Admin Overview</h1>
+        <p class="text-slate-400 text-xs" id="greeting"></p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/admin/announcements.html" class="p-2 text-slate-500 hover:bg-blue-50 rounded-full"><span class="material-symbols-outlined">campaign</span></a>
+        <a href="/admin/settings.html"      class="p-2 text-slate-500 hover:bg-blue-50 rounded-full"><span class="material-symbols-outlined">settings</span></a>
+      </div>
+    </header>
+
+    <div class="p-8 space-y-8">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-100">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-[#007BFF] text-3xl">menu_book</span>
+            <span class="text-xs font-bold text-slate-400 uppercase">Courses</span>
+          </div>
+          <p class="headline text-4xl font-black text-[#0A2540]" id="stat-courses">-</p>
+          <p class="text-sm text-slate-400 mt-1">Published programs</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-[#009e76] text-3xl">people</span>
+            <span class="text-xs font-bold text-slate-400 uppercase">Students</span>
+          </div>
+          <p class="headline text-4xl font-black text-[#0A2540]" id="stat-students">-</p>
+          <p class="text-sm text-slate-400 mt-1">Registered accounts</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-[#f59e0b] text-3xl">how_to_reg</span>
+            <span class="text-xs font-bold text-slate-400 uppercase">Enrollments</span>
+          </div>
+          <p class="headline text-4xl font-black text-[#0A2540]" id="stat-enrollments">-</p>
+          <p class="text-sm text-slate-400 mt-1">Active enrollments</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100">
+          <div class="flex items-start justify-between mb-4">
+            <span class="material-symbols-outlined text-[#ef4444] text-3xl">assignment_ind</span>
+            <span class="text-xs font-bold text-slate-400 uppercase">Applications</span>
+          </div>
+          <p class="headline text-4xl font-black text-[#0A2540]" id="stat-applications">-</p>
+          <p class="text-sm text-slate-400 mt-1">Total applications</p>
+        </div>
+      </div>
+
+      <!-- Quick action cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/admin/courses.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#007BFF]/30 hover:shadow-md transition-all group">
+          <span class="material-symbols-outlined text-3xl text-[#007BFF] mb-4 block">menu_book</span>
+          <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Manage Courses</h3>
+          <p class="text-slate-500 text-sm">Add, edit, publish or remove courses from the catalog.</p>
+          <span class="text-[#007BFF] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">Go to Courses →</span>
+        </a>
+        <a href="/admin/users.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#009e76]/30 hover:shadow-md transition-all group">
+          <span class="material-symbols-outlined text-3xl text-[#009e76] mb-4 block">people</span>
+          <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Manage Users</h3>
+          <p class="text-slate-500 text-sm">View all users, change roles, manage accounts.</p>
+          <span class="text-[#009e76] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">Go to Users →</span>
+        </a>
+        <a href="/admin/applications.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#f59e0b]/30 hover:shadow-md transition-all group">
+          <span class="material-symbols-outlined text-3xl text-[#f59e0b] mb-4 block">assignment_ind</span>
+          <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Applications</h3>
+          <p class="text-slate-500 text-sm">Review, approve or reject student applications.</p>
+          <span class="text-[#f59e0b] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">Go to Applications →</span>
+        </a>
+      </div>
+
+      <!-- Recent students table -->
+      <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <div class="flex justify-between items-center p-6 border-b border-slate-100">
+          <h2 class="headline font-bold text-lg text-[#0A2540]">Recent Students</h2>
+          <a href="/admin/users.html" class="text-[#007BFF] font-bold text-sm">View All →</a>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs uppercase font-bold text-slate-500">
+            <tr><th class="p-4">Name</th><th class="p-4">Email</th><th class="p-4">Joined</th><th class="p-4">Role</th></tr>
+          </thead>
+          <tbody id="students-table">
+            <tr><td colspan="4" class="p-8 text-center text-slate-400">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+async function init() {
+  const auth = await requireRole(["admin", "instructor"], "/student/dashboard.html");
+  if (!auth) return;
+
+  const name = auth.profile.full_name || auth.user.email;
+  const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2);
+  document.getElementById("admin-initials").textContent = initials;
+  document.getElementById("admin-name").textContent = name;
+
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  document.getElementById("greeting").textContent = `${greet}, ${name.split(" ")[0]}!`;
+
+  // Stats
+  const [cRes, sRes, eRes, aRes] = await Promise.all([
+    sb.from("courses").select("*", { count:"exact", head:true }).eq("is_published", true),
+    sb.from("profiles").select("*", { count:"exact", head:true }).eq("role", "student"),
+    sb.from("enrollments").select("*", { count:"exact", head:true }),
+    sb.from("applications").select("*", { count:"exact", head:true }),
+  ]);
+  document.getElementById("stat-courses").textContent      = cRes.count ?? 0;
+  document.getElementById("stat-students").textContent     = sRes.count ?? 0;
+  document.getElementById("stat-enrollments").textContent  = eRes.count ?? 0;
+  document.getElementById("stat-applications").textContent = aRes.count ?? 0;
+
+  // Recent students
+  const { data: students } = await sb.from("profiles").select("*").eq("role","student").order("created_at",{ascending:false}).limit(10);
+  const tbody = document.getElementById("students-table");
+  if (!students?.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400">No students yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = students.map(s => `
+    <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+      <td class="p-4 font-bold text-[#0A2540]">${s.full_name || "-"}</td>
+      <td class="p-4 text-slate-500">${s.email}</td>
+      <td class="p-4 text-slate-400 text-xs">${new Date(s.created_at).toLocaleDateString()}</td>
+      <td class="p-4"><span class="bg-[#eff4ff] text-[#007BFF] text-xs font-bold px-2 py-1 rounded">${s.role}</span></td>
+    </tr>
+  `).join("");
+}
+init();
+</script>
+</body>
+</html>

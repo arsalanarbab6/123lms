@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CyberEdge Academy | The Neon Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .glass{background:rgba(255,255,255,.8);backdrop-filter:blur(24px)}
+  .mesh{background-color:#f8f9ff;background-image:radial-gradient(at 0% 0%,hsla(210,100%,93%,1) 0,transparent 50%),radial-gradient(at 50% 0%,hsla(210,100%,96%,1) 0,transparent 50%),radial-gradient(at 100% 0%,hsla(160,100%,94%,1) 0,transparent 50%)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] text-[#001c37]">
+
+<!-- ===== NAVBAR ===== -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm h-20 flex justify-between items-center px-8">
+  <div class="flex items-center gap-10 h-full">
+    <a href="/public/index.html" class="headline font-black text-2xl text-[#0A2540] tracking-tighter">The Neon Academy</a>
+    <div class="hidden md:flex gap-8 items-center h-full text-sm font-bold headline">
+      <a href="/public/courses.html"     class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Courses</a>
+      <a href="/public/how-it-works.html" class="text-[#0A2540] hover:text-[#007BFF] transition-colors">How It Works</a>
+      <a href="/public/eligibility.html" class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Eligibility</a>
+      <a href="/public/about.html"       class="text-[#0A2540] hover:text-[#007BFF] transition-colors">About</a>
+      <a href="/public/faqs.html"        class="text-[#0A2540] hover:text-[#007BFF] transition-colors">FAQs</a>
+    </div>
+  </div>
+  <div id="nav-auth" class="flex items-center gap-3"></div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<main class="pt-20 mesh min-h-screen">
+  <section class="px-8 pt-24 pb-32 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+    <div class="lg:col-span-7 space-y-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d8e2ff] text-[#004493] text-xs font-bold uppercase tracking-widest">
+        <span class="w-2 h-2 rounded-full bg-[#009e76] animate-pulse"></span>
+        Government Digital Initiative
+      </div>
+      <h1 class="headline text-7xl lg:text-8xl font-black text-[#000f22] leading-[.9] tracking-tighter">
+        Forge Your <span class="text-[#0059bb]">Digital</span> Edge.
+      </h1>
+      <p class="text-xl text-[#43474d] max-w-xl leading-relaxed">
+        The elite portal for government-backed digital skill acquisition. Master high-impact technologies with industry-leading mentors.
+      </p>
+      <div class="flex flex-wrap gap-4 pt-4">
+        <a href="/public/signup.html" class="sig-grad text-white headline font-bold text-lg px-10 py-4 rounded-lg shadow-xl hover:scale-[1.02] transition-all inline-block">Apply Now</a>
+        <a href="/public/courses.html" class="bg-[#d2e4ff] text-[#004493] headline font-bold text-lg px-10 py-4 rounded-lg hover:bg-[#dce9ff] transition-all inline-block">Explore Courses</a>
+      </div>
+    </div>
+    <div class="lg:col-span-5 relative">
+      <div class="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/20">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUCsdqufTRkb93p1NsKk-4XazoBK8R0oMyavWi6mu5tBAAl4rdY8qnUL8GTJ_a_tWsE_PgGEI-rEDj7CuxM-4Qi4MvKKcdFgvi_OsP8QRZ8bJWtHSJOJV2fpfT5DIJ1LT5SEa3YN9wS9MH_cjyYhDqkcwc57nh_oPxIVYxKlGLsrSerXyQ5aPbXXmrlvId5Zsc-NF3mBhO3bUQ63QQq6lzBe2eD0dDj6PEFPt_eHpMRESlxUDTCRnupgqSVbcBGURsqVxt4TIi75o" alt="Tech Hub" class="w-full aspect-square object-cover"/>
+      </div>
+      <div class="absolute -top-10 -right-10 glass p-6 rounded-2xl shadow-xl z-20 border border-[#c4c6ce]/15 w-48">
+        <p class="text-[10px] uppercase font-bold text-[#009e76] mb-2">Live Progress</p>
+        <div class="h-2 w-full bg-[#dce9ff] rounded-full overflow-hidden mb-2">
+          <div class="h-full sig-grad w-[78%]"></div>
+        </div>
+        <p class="headline text-2xl font-bold text-[#000f22]">78%</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="px-8 py-20 bg-white">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="md:col-span-2 bg-[#eff4ff] p-10 rounded-[2rem] flex flex-col justify-between">
+        <span class="material-symbols-outlined text-4xl text-[#0059bb] mb-8">groups</span>
+        <div>
+          <p class="headline text-6xl font-black text-[#000f22] tracking-tighter" id="stat-students">-</p>
+          <p class="text-[#43474d] font-semibold">Active Students Enrolled</p>
+        </div>
+      </div>
+      <div class="bg-[#0a2540] p-10 rounded-[2rem] text-white">
+        <span class="material-symbols-outlined text-4xl text-[#3adfab] mb-8">school</span>
+        <p class="headline text-5xl font-black tracking-tighter">450+</p>
+        <p class="text-[#d8e2ff] opacity-80 mt-2">Expert Instructors</p>
+      </div>
+      <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-[#c4c6ce]/10">
+        <span class="material-symbols-outlined text-4xl text-[#009e76] mb-8">terminal</span>
+        <p class="headline text-5xl font-black text-[#000f22] tracking-tighter" id="stat-courses">-</p>
+        <p class="text-[#43474d] font-semibold mt-2">Elite Programs</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COURSE CATEGORIES ===== -->
+  <section class="px-8 py-24 bg-[#eff4ff]">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+        <div class="max-w-2xl">
+          <h2 class="headline text-5xl font-bold text-[#000f22] tracking-tight mb-6">Explore the <span class="text-[#0059bb]">Curriculum</span> Hub.</h2>
+          <p class="text-[#43474d] text-lg leading-relaxed">Specialized tracks designed for the next generation of digital architects and cyber defense specialists.</p>
+        </div>
+        <a href="/public/courses.html" class="headline font-bold text-[#0059bb] border-b-2 border-[#0059bb] pb-1 hover:opacity-70 transition-opacity">View All Courses</a>
+      </div>
+      <!-- Live courses from Supabase -->
+      <div id="course-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="col-span-3 text-center text-[#74777e] py-12">Loading courses...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="px-8 py-24 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-20">
+        <h2 class="headline text-5xl font-bold text-[#000f22] tracking-tight">The Academy Journey</h2>
+        <p class="text-[#43474d] mt-4 text-lg">A seamless transition from novice to elite professional.</p>
+      </div>
+      <div class="relative grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="hidden md:block absolute top-1/2 left-0 w-full h-px bg-[#c4c6ce]/20 -translate-y-1/2"></div>
+        <div class="relative z-10 flex flex-col items-center text-center px-6">
+          <div class="w-16 h-16 rounded-full sig-grad text-white flex items-center justify-center headline text-2xl font-bold mb-8 shadow-lg">1</div>
+          <h4 class="headline text-xl font-bold text-[#000f22] mb-4">Identify Path</h4>
+          <p class="text-[#43474d]">Use our digital assessment tool to find the track that aligns with your professional DNA.</p>
+        </div>
+        <div class="relative z-10 flex flex-col items-center text-center px-6">
+          <div class="w-16 h-16 rounded-full sig-grad text-white flex items-center justify-center headline text-2xl font-bold mb-8 shadow-lg">2</div>
+          <h4 class="headline text-xl font-bold text-[#000f22] mb-4">Intensive Mastery</h4>
+          <p class="text-[#43474d]">Engage in high-fidelity lab environments and live mentor sessions to build real-world skills.</p>
+        </div>
+        <div class="relative z-10 flex flex-col items-center text-center px-6">
+          <div class="w-16 h-16 rounded-full sig-grad text-white flex items-center justify-center headline text-2xl font-bold mb-8 shadow-lg">3</div>
+          <h4 class="headline text-xl font-bold text-[#000f22] mb-4">Elite Placement</h4>
+          <p class="text-[#43474d]">Gain exclusive access to high-impact career opportunities within our government partner network.</p>
+        </div>
+      </div>
+      <div class="text-center mt-12">
+        <a href="/public/how-it-works.html" class="headline font-bold text-[#0059bb] border-b-2 border-[#0059bb] pb-1">See the full journey →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="px-8 py-20 bg-[#0a2540] text-white">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="headline text-5xl font-bold tracking-tight mb-6">Ready to transform your <span class="text-[#3adfab]">digital future?</span></h2>
+      <p class="text-[#768dad] text-lg mb-10">Applications for the next cohort are now open. Secure your spot today.</p>
+      <a href="/public/signup.html" class="sig-grad text-white headline font-bold text-lg px-12 py-5 rounded-2xl shadow-2xl hover:scale-[1.02] active:scale-95 transition-all inline-block">Apply Now — It's Free</a>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="bg-[#0A2540] text-white w-full py-12 px-8 border-t border-white/10">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="space-y-4">
+      <p class="headline font-bold text-lg">The Neon Academy</p>
+      <p class="text-slate-400 text-sm leading-relaxed">Pioneering the next generation of digital infrastructure through elite skill acquisition.</p>
+    </div>
+    <div>
+      <h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Navigation</h4>
+      <ul class="space-y-3 text-sm text-slate-400">
+        <li><a href="/public/courses.html"      class="hover:text-[#009e76] transition-colors">Courses</a></li>
+        <li><a href="/public/how-it-works.html" class="hover:text-[#009e76] transition-colors">How It Works</a></li>
+        <li><a href="/public/about.html"        class="hover:text-[#009e76] transition-colors">About</a></li>
+        <li><a href="/public/contact.html"      class="hover:text-[#009e76] transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Legal</h4>
+      <ul class="space-y-3 text-sm text-slate-400">
+        <li><a href="#" class="hover:text-[#009e76] transition-colors">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-[#009e76] transition-colors">Terms of Service</a></li>
+        <li><a href="/public/faqs.html" class="hover:text-[#009e76] transition-colors">FAQs</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Connect</h4>
+      <p class="text-slate-400 text-xs">Contact Support: 24/7 Digital Concierge</p>
+      <p class="text-slate-400 text-xs mt-2">info@kpitb.gov.pk</p>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto mt-10 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+    <p class="text-slate-400 text-sm">© 2024 The Neon Academy. Government Digital Initiative.</p>
+    <p class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">Secure Portal v2.4</p>
+  </div>
+</footer>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<script>
+// ---- Load live data from Supabase ----
+async function loadStats() {
+  const [{ count: students }, { count: courses }] = await Promise.all([
+    sb.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
+    sb.from("courses").select("*",   { count: "exact", head: true }).eq("is_published", true),
+  ]);
+  document.getElementById("stat-students").textContent = students ? students.toLocaleString() + "+" : "0";
+  document.getElementById("stat-courses").textContent  = courses  ? courses                        : "0";
+}
+
+async function loadCourses() {
+  const { data, error } = await sb
+    .from("courses")
+    .select("*")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  const grid = document.getElementById("course-grid");
+  if (error || !data?.length) {
+    grid.innerHTML = `<p class="col-span-3 text-center text-[#74777e] py-12">No courses published yet.</p>`;
+    return;
+  }
+
+  const icons = { "Cyber Defense":"shield", "Data Science AI":"monitoring", "Web Development":"code", "Design":"draw", "Data Engineering":"database" };
+
+  grid.innerHTML = data.map(c => `
+    <a href="/public/course-detail.html?id=${c.id}" class="group bg-white p-8 rounded-[1.5rem] hover:bg-[#dce9ff] transition-all duration-300 block">
+      <div class="w-14 h-14 rounded-xl bg-[#0059bb]/10 flex items-center justify-center text-[#0059bb] mb-6 group-hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined text-3xl">${icons[c.category] || "school"}</span>
+      </div>
+      <h3 class="headline text-xl font-bold text-[#000f22] mb-3">${c.title}</h3>
+      <p class="text-[#43474d] text-sm mb-6 line-clamp-2">${c.description || ""}</p>
+      <div class="flex items-center justify-between text-[#009e76] text-sm font-bold">
+        <span>${c.duration_weeks} Weeks · ${c.level}</span>
+        <span class="material-symbols-outlined text-sm">trending_up</span>
+      </div>
+    </a>
+  `).join("");
+}
+
+setupNav();
+loadStats();
+loadCourses();
+</script>
+</body>
+</html>

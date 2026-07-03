@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Course Management | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+  .sidebar-link:hover{background:rgba(255,255,255,.08);color:#fff}
+  .sidebar-link.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+    <div class="px-6 mb-10">
+      <a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a>
+      <p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1">Management Portal</p>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/admin/dashboard.html"    class="sidebar-link"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">grid_view</span>Dashboard</a>
+      <a href="/admin/courses.html"      class="sidebar-link active"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+      <a href="/admin/users.html"        class="sidebar-link"><span class="material-symbols-outlined">people</span>Users</a>
+      <a href="/admin/applications.html" class="sidebar-link"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+      <a href="/admin/enrollments.html"  class="sidebar-link"><span class="material-symbols-outlined">how_to_reg</span>Enrollments</a>
+      <a href="/admin/attendance.html"   class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/admin/announcements.html" class="sidebar-link"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+      <a href="/admin/settings.html"     class="sidebar-link"><span class="material-symbols-outlined">settings</span>Settings</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-white/10 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-900/20">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex flex-col">
+    <header class="bg-white shadow-sm sticky top-0 z-40 flex justify-between items-center px-8 py-4">
+      <div>
+        <h1 class="headline font-black text-xl text-[#0A2540]">Course Management</h1>
+        <p class="text-slate-400 text-xs">Add, edit, publish or remove courses. Changes go live instantly.</p>
+      </div>
+      <button onclick="openModal()" class="sig-grad text-white headline font-bold px-6 py-3 rounded-lg flex items-center gap-2">
+        <span class="material-symbols-outlined">add</span> Add Course
+      </button>
+    </header>
+
+    <div class="p-8">
+      <!-- Search + filter bar -->
+      <div class="bg-white rounded-xl border border-slate-100 p-4 flex gap-4 mb-6">
+        <input id="search" type="text" placeholder="Search courses..." oninput="filterTable()"
+          class="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#007BFF]"/>
+        <select id="filter-pub" onchange="filterTable()" class="border border-slate-200 rounded-lg px-4 py-2 text-sm">
+          <option value="">All Status</option>
+          <option value="true">Published</option>
+          <option value="false">Unpublished</option>
+        </select>
+        <select id="filter-level" onchange="filterTable()" class="border border-slate-200 rounded-lg px-4 py-2 text-sm">
+          <option value="">All Levels</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs uppercase font-bold text-slate-500">
+            <tr>
+              <th class="p-4">Course</th>
+              <th class="p-4 hidden md:table-cell">Category</th>
+              <th class="p-4 hidden md:table-cell">Level</th>
+              <th class="p-4 hidden md:table-cell">Duration</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="courses-tbody">
+            <tr><td colspan="6" class="p-10 text-center text-slate-400">Loading courses...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-slate-400 mt-3" id="course-count"></p>
+    </div>
+  </main>
+</div>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+  <div class="bg-white rounded-2xl p-8 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <h2 id="modal-title" class="headline text-2xl font-bold text-[#0A2540]">Add Course</h2>
+      <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form id="courseForm" class="space-y-4">
+      <input type="hidden" id="course-id"/>
+
+      <div>
+        <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Title *</label>
+        <input id="f-title" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]"/>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Description</label>
+        <textarea id="f-desc" rows="3" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF] resize-none"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Category</label>
+          <input id="f-category" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]" placeholder="e.g. Cyber Defense"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Level</label>
+          <select id="f-level" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]">
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Duration (weeks)</label>
+          <input id="f-weeks" type="number" value="12" min="1" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Contact Hours</label>
+          <input id="f-hours" type="number" value="144" min="1" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase tracking-wide text-slate-500">Image URL</label>
+        <input id="f-image" type="url" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#007BFF]" placeholder="https://..."/>
+      </div>
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input id="f-published" type="checkbox" checked class="w-5 h-5 accent-[#007BFF]"/>
+        <span class="text-sm font-bold text-[#0A2540]">Published (visible to students)</span>
+      </label>
+
+      <p id="form-err" class="text-red-500 text-sm hidden"></p>
+
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="closeModal()" class="flex-1 border border-slate-200 font-bold py-3 rounded-lg hover:bg-slate-50">Cancel</button>
+        <button type="submit" id="form-submit" class="flex-1 sig-grad text-white headline font-bold py-3 rounded-lg">Save Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let allCourses = [];
+
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = type === "success" ? "#00C896" : "#ef4444";
+  t.style.opacity = "1";
+  setTimeout(() => { t.style.opacity = "0"; }, 3000);
+}
+
+async function init() {
+  await requireRole(["admin", "instructor"], "/student/dashboard.html");
+  loadCourses();
+}
+
+async function loadCourses() {
+  const { data, error } = await sb.from("courses").select("*").order("created_at", { ascending: false });
+  if (error) { showToast(error.message, "error"); return; }
+  allCourses = data;
+  renderTable(data);
+}
+
+function renderTable(data) {
+  document.getElementById("course-count").textContent = `Showing ${data.length} courses`;
+  const tbody = document.getElementById("courses-tbody");
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-slate-400">No courses found. Click "Add Course" to create one.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(c => `
+    <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+      <td class="p-4">
+        <div class="flex items-center gap-3">
+          <img src="${c.image_url || 'https://placehold.co/48x48/0A2540/ffffff'}" class="w-10 h-10 rounded-lg object-cover"/>
+          <div>
+            <p class="font-bold text-[#0A2540]">${c.title}</p>
+            <p class="text-xs text-slate-400 line-clamp-1">${c.description || ''}</p>
+          </div>
+        </div>
+      </td>
+      <td class="p-4 text-slate-500 hidden md:table-cell">${c.category || '-'}</td>
+      <td class="p-4 hidden md:table-cell"><span class="bg-[#eff4ff] text-[#007BFF] text-xs font-bold px-2 py-1 rounded">${c.level}</span></td>
+      <td class="p-4 text-slate-500 hidden md:table-cell text-xs">${c.duration_weeks}w / ${c.contact_hours}h</td>
+      <td class="p-4">
+        ${c.is_published
+          ? '<span class="flex items-center gap-1 text-[#009e76] text-xs font-bold"><span class="w-2 h-2 rounded-full bg-[#009e76]"></span>Published</span>'
+          : '<span class="flex items-center gap-1 text-slate-400 text-xs font-bold"><span class="w-2 h-2 rounded-full bg-slate-300"></span>Draft</span>'}
+      </td>
+      <td class="p-4 text-right">
+        <div class="flex items-center justify-end gap-3">
+          <button onclick="openModal('${c.id}')" class="text-[#007BFF] font-bold text-sm hover:underline">Edit</button>
+          <button onclick="togglePublish('${c.id}', ${c.is_published})" class="text-[#f59e0b] font-bold text-sm hover:underline">${c.is_published ? 'Unpublish' : 'Publish'}</button>
+          <button onclick="deleteCourse('${c.id}')" class="text-red-500 font-bold text-sm hover:underline">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function filterTable() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const pub    = document.getElementById("filter-pub").value;
+  const level  = document.getElementById("filter-level").value;
+  const filtered = allCourses.filter(c => {
+    const matchSearch = c.title.toLowerCase().includes(search) || (c.category || "").toLowerCase().includes(search);
+    const matchPub    = pub   === "" || c.is_published.toString() === pub;
+    const matchLevel  = level === "" || c.level === level;
+    return matchSearch && matchPub && matchLevel;
+  });
+  renderTable(filtered);
+}
+
+function openModal(courseId) {
+  document.getElementById("form-err").classList.add("hidden");
+  document.getElementById("courseForm").reset();
+  document.getElementById("course-id").value = "";
+  document.getElementById("f-published").checked = true;
+
+  if (courseId) {
+    const c = allCourses.find(x => x.id === courseId);
+    document.getElementById("modal-title").textContent = "Edit Course";
+    document.getElementById("course-id").value = c.id;
+    document.getElementById("f-title").value    = c.title;
+    document.getElementById("f-desc").value     = c.description || "";
+    document.getElementById("f-category").value = c.category || "";
+    document.getElementById("f-level").value    = c.level;
+    document.getElementById("f-weeks").value    = c.duration_weeks;
+    document.getElementById("f-hours").value    = c.contact_hours;
+    document.getElementById("f-image").value    = c.image_url || "";
+    document.getElementById("f-published").checked = c.is_published;
+  } else {
+    document.getElementById("modal-title").textContent = "Add Course";
+  }
+  document.getElementById("modal").classList.remove("hidden");
+  document.getElementById("f-title").focus();
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
+}
+
+// Close modal if clicking outside
+document.getElementById("modal").addEventListener("click", (e) => {
+  if (e.target === document.getElementById("modal")) closeModal();
+});
+
+document.getElementById("courseForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errEl  = document.getElementById("form-err");
+  const subBtn = document.getElementById("form-submit");
+  errEl.classList.add("hidden");
+  subBtn.disabled = true; subBtn.textContent = "Saving...";
+
+  const id = document.getElementById("course-id").value;
+  const payload = {
+    title:         document.getElementById("f-title").value.trim(),
+    description:   document.getElementById("f-desc").value.trim(),
+    category:      document.getElementById("f-category").value.trim(),
+    level:         document.getElementById("f-level").value,
+    duration_weeks:parseInt(document.getElementById("f-weeks").value) || 12,
+    contact_hours: parseInt(document.getElementById("f-hours").value) || 144,
+    image_url:     document.getElementById("f-image").value.trim(),
+    is_published:  document.getElementById("f-published").checked,
+    updated_at:    new Date().toISOString(),
+  };
+
+  let error;
+  if (id) {
+    ({ error } = await sb.from("courses").update(payload).eq("id", id));
+  } else {
+    ({ error } = await sb.from("courses").insert(payload));
+  }
+
+  subBtn.disabled = false; subBtn.textContent = "Save Course";
+
+  if (error) {
+    errEl.textContent = error.message; errEl.classList.remove("hidden"); return;
+  }
+  closeModal();
+  showToast(id ? "Course updated!" : "Course created!");
+  loadCourses();
+});
+
+async function togglePublish(id, current) {
+  const { error } = await sb.from("courses").update({ is_published: !current, updated_at: new Date().toISOString() }).eq("id", id);
+  if (error) { showToast(error.message, "error"); return; }
+  showToast(!current ? "Course published!" : "Course unpublished.");
+  loadCourses();
+}
+
+async function deleteCourse(id) {
+  const c = allCourses.find(x => x.id === id);
+  if (!confirm(`Delete "${c?.title}"?\n\nThis will also remove all enrollments for this course. This cannot be undone.`)) return;
+  const { error } = await sb.from("courses").delete().eq("id", id);
+  if (error) { showToast(error.message, "error"); return; }
+  showToast("Course deleted.");
+  loadCourses();
+}
+
+init();
+</script>
+</body>
+</html>

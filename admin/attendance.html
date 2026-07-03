@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Attendance | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/admin/dashboard.html"     class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/admin/courses.html"       class="sl"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+    <a href="/admin/users.html"         class="sl"><span class="material-symbols-outlined">people</span>Users</a>
+    <a href="/admin/applications.html"  class="sl"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+    <a href="/admin/attendance.html"    class="sl active"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/admin/announcements.html" class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+    <a href="/admin/analytics.html"     class="sl"><span class="material-symbols-outlined">insights</span>Analytics</a>
+    <a href="/admin/settings.html"      class="sl"><span class="material-symbols-outlined">settings</span>Settings</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4"><button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button></div>
+</aside>
+<main class="flex-1 p-8">
+  <div class="flex justify-between items-center mb-8"><div><h1 class="headline text-3xl font-bold text-[#0A2540]">Attendance Management</h1><p class="text-slate-400 mt-1">View and monitor attendance across all courses.</p></div></div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs font-bold text-slate-400 uppercase mb-2">Total Records</p><p class="headline text-3xl font-black text-[#0A2540]" id="at-total">-</p></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs font-bold text-slate-400 uppercase mb-2">Present</p><p class="headline text-3xl font-black text-[#009e76]" id="at-present">-</p></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs font-bold text-slate-400 uppercase mb-2">Absent</p><p class="headline text-3xl font-black text-red-400" id="at-absent">-</p></div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100"><p class="text-xs font-bold text-slate-400 uppercase mb-2">Avg Rate</p><p class="headline text-3xl font-black text-[#007BFF]" id="at-rate">-%</p></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-100 p-4 mb-6 flex gap-4">
+    <select id="f-course" onchange="load()" class="border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#007BFF] flex-1 md:flex-none md:w-56"><option value="">All Courses</option></select>
+    <input id="f-date" type="date" onchange="load()" class="border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#007BFF]"/>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 text-left">
+        <tr><th class="p-4">Student</th><th class="p-4">Course</th><th class="p-4">Date</th><th class="p-4">Session</th><th class="p-4">Status</th></tr>
+      </thead>
+      <tbody id="att-tbody"><tr><td colspan="5" class="p-10 text-center text-slate-400">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</main>
+</div>
+<script>
+async function init(){
+  await requireRole(['admin'],'/student/dashboard.html');
+  const{data:courses}=await sb.from('courses').select('id,title').order('title');
+  const sel=document.getElementById('f-course');
+  (courses||[]).forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.title;sel.appendChild(o);});
+  load();
+}
+async function load(){
+  const cId=document.getElementById('f-course').value;
+  const date=document.getElementById('f-date').value;
+  let q=sb.from('attendance').select('*, profiles!student_id(full_name,email), courses(title)').order('session_date',{ascending:false}).limit(100);
+  if(cId)q=q.eq('course_id',cId);
+  if(date)q=q.eq('session_date',date);
+  const{data}=await q;
+  const all=data||[];
+  const present=all.filter(r=>r.status==='present').length;
+  const absent=all.filter(r=>r.status==='absent').length;
+  document.getElementById('at-total').textContent=all.length;
+  document.getElementById('at-present').textContent=present;
+  document.getElementById('at-absent').textContent=absent;
+  document.getElementById('at-rate').textContent=all.length?Math.round(present/all.length*100)+'%':'-%';
+  const tbody=document.getElementById('att-tbody');
+  if(!all.length){tbody.innerHTML='<tr><td colspan="5" class="p-10 text-center text-slate-400">No attendance records found.</td></tr>';return;}
+  tbody.innerHTML=all.map(r=>`<tr class="border-t border-slate-100 hover:bg-slate-50"><td class="p-4 font-bold text-[#0A2540]">${r.profiles?.full_name||'-'}<p class="text-xs text-slate-400">${r.profiles?.email||''}</p></td><td class="p-4 text-slate-500 text-sm">${r.courses?.title||'-'}</td><td class="p-4 text-slate-400 text-xs">${r.session_date}</td><td class="p-4 text-slate-500 text-xs">${r.session_title||'Session'}</td><td class="p-4"><span class="text-xs font-bold px-2 py-1 rounded-full ${r.status==='present'?'bg-[#f0fff8] text-[#009e76]':r.status==='absent'?'bg-red-50 text-red-400':'bg-yellow-50 text-yellow-600'}">${r.status}</span></td></tr>`).join('');
+}
+init();
+</script>
+</body>
+</html>

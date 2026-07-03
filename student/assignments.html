@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Assignments | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+  .sidebar-link:hover{background:#eff4ff;color:#007BFF}
+  .sidebar-link.active{background:#dce9ff;color:#007BFF}
+  .upload-zone{border:2px dashed #c4c6ce;border-radius:1rem;transition:all .2s;cursor:pointer}
+  .upload-zone:hover{border-color:#007BFF;background:#eff4ff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 sig-grad rounded-xl flex items-center justify-center text-white">
+        <span class="material-symbols-outlined">architecture</span>
+      </div>
+      <div>
+        <a href="/public/index.html" class="headline font-extrabold text-[#0A2540] leading-none block">CyberEdge</a>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400">Student Portal</p>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"    class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"   class="sidebar-link"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/assignments.html"  class="sidebar-link active"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+      <a href="/student/attendance.html"   class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/student/quizzes.html"      class="sidebar-link"><span class="material-symbols-outlined">quiz</span>Quizzes</a>
+      <a href="/student/results.html"      class="sidebar-link"><span class="material-symbols-outlined">leaderboard</span>Results</a>
+      <a href="/student/notifications.html" class="sidebar-link"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"      class="sidebar-link"><span class="material-symbols-outlined">person</span>Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4">
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-8">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="headline text-3xl font-bold text-[#0A2540]">Assignments</h1>
+        <p class="text-[#43474d] mt-1">All your pending and submitted assignments.</p>
+      </div>
+    </div>
+
+    <!-- Assignment list -->
+    <div id="assignments-list" class="space-y-4 mb-10">
+      <p class="text-slate-400 text-center py-10">Loading assignments...</p>
+    </div>
+
+    <!-- SUBMISSION PANEL -->
+    <div class="bg-white rounded-2xl border border-[#e5eeff] p-8 shadow-sm" id="submit-panel" style="display:none">
+      <h2 class="headline text-xl font-bold text-[#0A2540] mb-2" id="submit-title">Submit Assignment</h2>
+      <p class="text-[#43474d] text-sm mb-6" id="submit-desc">-</p>
+
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-[#eff4ff] p-5 rounded-xl">
+          <h3 class="headline font-bold text-sm mb-3">Submission Guidelines</h3>
+          <ul class="text-sm text-[#43474d] space-y-2">
+            <li class="flex gap-2"><span class="material-symbols-outlined text-[#007BFF] text-sm">check</span>Single PDF file only</li>
+            <li class="flex gap-2"><span class="material-symbols-outlined text-[#007BFF] text-sm">check</span>Maximum size: 10 MB</li>
+            <li class="flex gap-2"><span class="material-symbols-outlined text-[#007BFF] text-sm">check</span>Late submissions lose 10% marks/day</li>
+            <li class="flex gap-2"><span class="material-symbols-outlined text-[#007BFF] text-sm">check</span>Include your name & roll no</li>
+          </ul>
+        </div>
+        <div class="bg-[#eff4ff] p-5 rounded-xl">
+          <h3 class="headline font-bold text-sm mb-3">Grading Rubric</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span>Correctness</span><span class="font-bold">40%</span></div>
+            <div class="flex justify-between"><span>Code Quality</span><span class="font-bold">30%</span></div>
+            <div class="flex justify-between"><span>Documentation</span><span class="font-bold">20%</span></div>
+            <div class="flex justify-between"><span>Presentation</span><span class="font-bold">10%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-zone p-8 text-center mb-4" onclick="document.getElementById('sub-file').click()">
+        <span class="material-symbols-outlined text-4xl text-slate-300 block mb-2">cloud_upload</span>
+        <p class="font-bold text-[#43474d]">Click or drag & drop your file</p>
+        <p class="text-xs text-slate-400 mt-1">PDF / ZIP — max 10MB</p>
+        <p id="sub-file-name" class="text-xs font-bold text-[#009e76] mt-2"></p>
+      </div>
+      <input type="file" id="sub-file" class="hidden" accept=".pdf,.zip,.doc,.docx"
+        onchange="document.getElementById('sub-file-name').textContent = this.files[0]?.name || ''"/>
+
+      <p id="sub-err" class="text-red-500 text-sm hidden mb-3"></p>
+      <p id="sub-suc" class="text-[#009e76] text-sm hidden mb-3"></p>
+
+      <div class="flex gap-4">
+        <button onclick="document.getElementById('submit-panel').style.display='none'"
+          class="flex-1 border-2 border-slate-200 font-bold py-3 rounded-xl hover:bg-slate-50">Cancel</button>
+        <button onclick="submitAssignment()"
+          class="flex-1 sig-grad text-white headline font-bold py-3 rounded-xl" id="sub-btn">
+          Submit Assignment
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let currentUser = null;
+let selectedAssignmentId = null;
+
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = type === "success" ? "#00C896" : "#ef4444";
+  t.style.opacity = "1";
+  setTimeout(() => { t.style.opacity = "0"; }, 3000);
+}
+
+async function init() {
+  currentUser = await requireAuth("/public/login.html");
+  if (!currentUser) return;
+
+  // Get all enrolled courses
+  const { data: enrollments } = await sb.from("enrollments").select("course_id").eq("student_id", currentUser.id);
+  const courseIds = (enrollments || []).map(e => e.course_id);
+
+  if (!courseIds.length) {
+    document.getElementById("assignments-list").innerHTML = `<p class="text-slate-400 text-center py-10">No assignments — enroll in a course first.</p>`;
+    return;
+  }
+
+  // Get assignments for enrolled courses
+  const { data: assignments, error } = await sb.from("assignments").select("*, courses(title)").in("course_id", courseIds).order("due_date");
+
+  // Get my submissions
+  const { data: submissions } = await sb.from("submissions").select("assignment_id, grade, submitted_at").eq("student_id", currentUser.id);
+  const subMap = {};
+  (submissions || []).forEach(s => { subMap[s.assignment_id] = s; });
+
+  const list = document.getElementById("assignments-list");
+  if (error || !assignments?.length) {
+    list.innerHTML = `<p class="text-slate-400 text-center py-10">No assignments yet. Your instructor hasn't posted any.</p>`;
+    return;
+  }
+
+  list.innerHTML = assignments.map(a => {
+    const sub = subMap[a.id];
+    const due = a.due_date ? new Date(a.due_date) : null;
+    const overdue = due && due < new Date() && !sub;
+    return `
+    <div class="bg-white rounded-2xl border ${overdue ? 'border-red-200' : sub ? 'border-[#00C896]/30' : 'border-slate-100'} p-6 shadow-sm hover:shadow-md transition-all">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-4 flex-1">
+          <div class="w-12 h-12 rounded-xl ${sub ? 'bg-[#f0fff8]' : overdue ? 'bg-red-50' : 'bg-[#eff4ff]'} flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined ${sub ? 'text-[#009e76]' : overdue ? 'text-red-400' : 'text-[#007BFF]'}"
+              style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">
+              ${sub ? 'task_alt' : overdue ? 'warning' : 'assignment'}
+            </span>
+          </div>
+          <div class="flex-1">
+            <p class="text-xs font-bold text-[#007BFF] uppercase mb-1">${a.courses?.title || 'Course'}</p>
+            <h3 class="headline font-bold text-[#0A2540] text-lg">${a.title}</h3>
+            <p class="text-sm text-slate-500 mt-1">${a.description || ''}</p>
+            <div class="flex items-center gap-4 mt-3 text-xs font-bold text-slate-400">
+              ${due ? `<span class="${overdue ? 'text-red-400' : ''} flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs">schedule</span>
+                Due: ${due.toLocaleDateString()}
+              </span>` : ''}
+              <span>${a.max_points} points</span>
+              ${sub ? `<span class="text-[#009e76]">Submitted ${new Date(sub.submitted_at).toLocaleDateString()}</span>` : ''}
+              ${sub?.grade != null ? `<span class="text-[#009e76]">Grade: ${sub.grade}/${a.max_points}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <div>
+          ${sub
+            ? `<span class="bg-[#f0fff8] text-[#009e76] text-xs font-bold px-3 py-1.5 rounded-full">Submitted ✓</span>`
+            : `<button onclick="openSubmit('${a.id}','${a.title}','${(a.description||'').replace(/'/g,'&apos;')}')"
+                class="sig-grad text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:opacity-90">Submit</button>`
+          }
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openSubmit(id, title, desc) {
+  selectedAssignmentId = id;
+  document.getElementById("submit-title").textContent = "Submit: " + title;
+  document.getElementById("submit-desc").textContent  = desc;
+  document.getElementById("sub-err").classList.add("hidden");
+  document.getElementById("sub-suc").classList.add("hidden");
+  document.getElementById("sub-file-name").textContent = "";
+  document.getElementById("sub-file").value = "";
+  document.getElementById("submit-panel").style.display = "block";
+  document.getElementById("submit-panel").scrollIntoView({ behavior:"smooth" });
+}
+
+async function submitAssignment() {
+  const errEl = document.getElementById("sub-err");
+  const sucEl = document.getElementById("sub-suc");
+  const btn   = document.getElementById("sub-btn");
+  const file  = document.getElementById("sub-file").files[0];
+  errEl.classList.add("hidden"); sucEl.classList.add("hidden");
+
+  if (!file) { errEl.textContent = "Please select a file to upload."; errEl.classList.remove("hidden"); return; }
+
+  btn.disabled = true; btn.textContent = "Submitting...";
+
+  let fileUrl = "";
+  const path = `${currentUser.id}/assignments/${selectedAssignmentId}_${Date.now()}_${file.name}`;
+  const { data: up } = await sb.storage.from("documents").upload(path, file, { upsert: true });
+  if (up) fileUrl = up.path;
+
+  const { error } = await sb.from("submissions").insert({
+    assignment_id: selectedAssignmentId,
+    student_id: currentUser.id,
+    file_url: fileUrl,
+    submitted_at: new Date().toISOString(),
+  });
+
+  btn.disabled = false; btn.textContent = "Submit Assignment";
+
+  if (error && error.code !== "23505") {
+    errEl.textContent = error.message; errEl.classList.remove("hidden"); return;
+  }
+  sucEl.textContent = "Submitted successfully!"; sucEl.classList.remove("hidden");
+  setTimeout(() => {
+    document.getElementById("submit-panel").style.display = "none";
+    init();
+  }, 1500);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Profile | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}
+.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.brand-gradient{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#64748b;transition:all .15s}
+.sidebar-link:hover{background:#eff4ff;color:#007BFF}
+.sidebar-link.active{background:#dce9ff;color:#007BFF}
+.eyebrow{display:inline-flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:22px;height:2px;background:#00C896;display:inline-block}
+.skill-chip{display:inline-flex;align-items:center;gap:6px;padding:.35rem .9rem;border-radius:999px;font-size:.8rem;font-weight:600}
+/* Edit panel */
+#edit-panel{display:none}
+#edit-panel.open{display:block}
+</style>
+</head>
+<body class="bg-[#f5f7fa] text-[#1A2332]">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-slate-50 py-6 border-r border-slate-100">
+    <div class="px-6 mb-10 flex items-center gap-3">
+      <div class="w-10 h-10 brand-gradient rounded-xl flex items-center justify-center text-white">
+        <span class="material-symbols-outlined">architecture</span>
+      </div>
+      <div>
+        <a href="/public/index.html" class="headline font-extrabold text-[#0A2540] leading-none block">CyberEdge</a>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400">Student Portal</p>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 space-y-1">
+      <a href="/student/dashboard.html"        class="sidebar-link"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+      <a href="/student/my-courses.html"        class="sidebar-link"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+      <a href="/student/assignments.html"       class="sidebar-link"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+      <a href="/student/attendance.html"        class="sidebar-link"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+      <a href="/student/results.html"           class="sidebar-link"><span class="material-symbols-outlined">leaderboard</span>Results</a>
+      <a href="/student/learning-progress.html" class="sidebar-link"><span class="material-symbols-outlined">trending_up</span>Progress</a>
+      <a href="/student/notifications.html"     class="sidebar-link"><span class="material-symbols-outlined">notifications</span>Notifications</a>
+      <a href="/student/profile.html"           class="sidebar-link active"><span class="material-symbols-outlined">person</span>My Profile</a>
+    </nav>
+    <div class="px-3 mt-auto border-t border-slate-200/50 pt-4 space-y-1">
+      <a href="/public/courses.html" class="sidebar-link"><span class="material-symbols-outlined">add_circle</span>Browse Courses</a>
+      <button onclick="signOut()" class="sidebar-link w-full text-left text-red-400 hover:bg-red-50">
+        <span class="material-symbols-outlined">logout</span>Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 pb-24">
+
+    <!-- TOP BAR -->
+    <header class="bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-40 flex justify-between items-center px-8 py-4">
+      <div>
+        <h1 class="headline font-black text-xl text-[#0A2540]">My Profile</h1>
+        <p class="text-slate-400 text-xs">Public talent profile · CyberEdge Academy</p>
+      </div>
+      <button onclick="toggleEdit()" id="edit-toggle-btn"
+        class="brand-gradient text-white font-bold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-sm">edit</span> Edit Profile
+      </button>
+    </header>
+
+    <!-- ===== EDIT PANEL ===== -->
+    <div id="edit-panel" class="bg-white border-b border-slate-100 px-8 py-8">
+      <h2 class="headline font-bold text-lg text-[#0A2540] mb-6">Edit Your Profile</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Full Name</label>
+          <input id="e-name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Phone</label>
+          <input id="e-phone" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">City</label>
+          <input id="e-city" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Job Title / Role</label>
+          <input id="e-title" placeholder="e.g. AI & ML Developer" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">LinkedIn</label>
+          <input id="e-linkedin" placeholder="linkedin.com/in/username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">GitHub / Portfolio</label>
+          <input id="e-portfolio" placeholder="github.com/username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div class="md:col-span-2 lg:col-span-3">
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">Bio / Personal Statement</label>
+          <textarea id="e-bio" rows="3" placeholder="Tell us about yourself, your goals and what you built..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:outline-none focus:border-[#007BFF]"></textarea>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-1.5">New Password (optional)</label>
+          <input id="e-pass" type="password" placeholder="Leave blank to keep current" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+      </div>
+      <p id="edit-err" class="text-red-500 text-sm hidden mb-3"></p>
+      <p id="edit-suc" class="text-[#009e76] text-sm hidden mb-3"></p>
+      <div class="flex gap-3">
+        <button onclick="toggleEdit()" class="border border-slate-200 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-slate-50">Cancel</button>
+        <button onclick="saveProfile()" class="brand-gradient text-white font-bold px-8 py-2.5 rounded-xl text-sm">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 md:px-8 pt-10 space-y-16">
+
+      <!-- ===== HEADER CARD ===== -->
+      <section>
+        <span class="eyebrow headline font-bold text-xs uppercase tracking-[.2em] text-[#00C896]">Public Profile · CyberEdge Talent Network</span>
+        <div class="mt-5 bg-white rounded-3xl border border-[#007BFF]/5 shadow-[0_20px_60px_rgba(0,123,255,0.06)] p-8 md:p-12">
+          <div class="flex flex-col md:flex-row gap-10 md:items-center">
+            <!-- Avatar -->
+            <div class="shrink-0">
+              <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden brand-gradient p-[3px]">
+                <div class="w-full h-full rounded-[13px] overflow-hidden bg-[#f5f7fa] flex items-center justify-center">
+                  <div class="brand-gradient w-full h-full flex items-center justify-center headline font-black text-white text-5xl" id="avatar-initials">?</div>
+                </div>
+              </div>
+            </div>
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-3 mb-3">
+                <span class="inline-flex items-center gap-1.5 bg-[#00C896]/10 text-[#009e76] px-3 py-1 rounded-full text-[11px] headline font-bold uppercase tracking-wider">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#00C896] animate-pulse"></span> Open to Work
+                </span>
+              </div>
+              <h1 class="headline text-3xl md:text-4xl font-extrabold text-[#007BFF] tracking-tight" id="p-name">Loading...</h1>
+              <p class="text-lg text-[#1A2332]/80 font-medium mt-1" id="p-title">CyberEdge Student</p>
+              <div class="flex items-center gap-2 text-[#6B7C93] text-sm mt-3">
+                <span class="material-symbols-outlined text-base">location_on</span>
+                <span id="p-location">Khyber Pakhtunkhwa</span>
+              </div>
+              <!-- Verification badges -->
+              <div class="flex flex-wrap gap-3 mt-6">
+                <div class="relative group">
+                  <div class="flex items-center gap-2 bg-[#007BFF]/10 text-[#007BFF] px-3.5 py-2 rounded-full text-xs headline font-bold cursor-default">
+                    <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">verified_user</span>
+                    Profile Verified
+                  </div>
+                  <div class="absolute left-0 top-full mt-2 w-72 bg-[#1A2332] text-white text-xs rounded-xl p-4 leading-relaxed opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-30 shadow-2xl">
+                    <p class="headline font-bold mb-1 text-[11px] uppercase tracking-widest text-[#00C896]">Identity & Credential Check</p>
+                    <p class="text-white/80">KPITB has confirmed this person's identity and verified their program completion and certificate against official records.</p>
+                  </div>
+                </div>
+                <div class="relative group">
+                  <div class="flex items-center gap-2 bg-[#00C896]/10 text-[#009e76] px-3.5 py-2 rounded-full text-xs headline font-bold cursor-default">
+                    <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">workspace_premium</span>
+                    Govt Certified
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- CTA -->
+            <div class="flex md:flex-col gap-3 shrink-0">
+              <a href="#connect" class="brand-gradient text-white headline font-bold text-sm px-7 py-3.5 rounded-xl text-center shadow-lg hover:opacity-90 transition-opacity">Connect</a>
+              <a href="/student/course-certificate.html" class="border border-[#007BFF]/15 text-[#007BFF] headline font-bold text-sm px-7 py-3.5 rounded-xl text-center hover:bg-[#007BFF]/5 transition-colors">Certificate</a>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div id="p-bio-wrap" class="mt-8 pt-8 border-t border-slate-100 hidden">
+            <p class="text-[#6B7C93] leading-relaxed" id="p-bio"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SKILLS ===== -->
+      <section>
+        <span class="eyebrow headline font-bold text-xs uppercase tracking-[.2em] text-[#00C896]">Skills</span>
+        <h2 class="headline text-2xl md:text-3xl font-extrabold text-[#007BFF] mt-3 mb-8">What you can do.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <p class="headline font-bold text-xs uppercase tracking-widest text-[#1A2332]/60 mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00C896] text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">verified</span> Verified During Training
+            </p>
+            <div class="flex flex-wrap gap-2.5" id="skills-verified">
+              <p class="text-slate-400 text-sm">No skills added yet.</p>
+            </div>
+          </div>
+          <div>
+            <p class="headline font-bold text-xs uppercase tracking-widest text-[#1A2332]/60 mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#6B7C93] text-base">add_circle</span> Self-Reported
+            </p>
+            <p class="text-xs text-[#6B7C93]/70 mt-2 italic">Skills added during profile creation appear here. <a href="#" onclick="toggleEdit();return false;" class="text-[#007BFF] underline">Add skills →</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CERTIFICATIONS ===== -->
+      <section>
+        <span class="eyebrow headline font-bold text-xs uppercase tracking-[.2em] text-[#00C896]">Credentials</span>
+        <h2 class="headline text-2xl md:text-3xl font-extrabold text-[#007BFF] mt-3 mb-8">Certifications.</h2>
+        <div class="bg-white rounded-2xl border border-[#007BFF]/5 divide-y divide-[#007BFF]/5" id="certs-list">
+          <p class="text-slate-400 text-sm p-6">Loading certifications...</p>
+        </div>
+      </section>
+
+      <!-- ===== ENROLLED COURSES (Experience equivalent) ===== -->
+      <section>
+        <span class="eyebrow headline font-bold text-xs uppercase tracking-[.2em] text-[#00C896]">Training</span>
+        <h2 class="headline text-2xl md:text-3xl font-extrabold text-[#007BFF] mt-3 mb-8">Enrolled Programs.</h2>
+        <div class="space-y-5" id="courses-list">
+          <p class="text-slate-400 text-sm">Loading...</p>
+        </div>
+      </section>
+
+      <!-- ===== LINKS ===== -->
+      <section id="p-links-section" class="hidden">
+        <span class="eyebrow headline font-bold text-xs uppercase tracking-[.2em] text-[#00C896]">Elsewhere</span>
+        <h2 class="headline text-2xl md:text-3xl font-extrabold text-[#007BFF] mt-3 mb-8">Portfolio & Social Links.</h2>
+        <div class="flex flex-wrap gap-4" id="p-links"></div>
+      </section>
+
+      <!-- ===== CONTACT CTA ===== -->
+      <section id="connect">
+        <div class="brand-gradient rounded-3xl p-10 md:p-14 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none"></div>
+          <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <h2 class="headline text-2xl md:text-3xl font-extrabold text-white mb-3" id="cta-title">Interested in connecting?</h2>
+              <p class="text-white/80 leading-relaxed mb-6">Reach out or verify this profile's credentials independently through CyberEdge Academy.</p>
+              <div class="flex flex-wrap gap-4">
+                <a id="cta-email" href="mailto:" class="bg-white text-[#007BFF] headline font-bold px-7 py-3.5 rounded-xl hover:bg-[#f5f7fa] transition-colors">Connect</a>
+                <a href="/public/contact.html" class="bg-white/10 border border-white/30 text-white headline font-bold px-7 py-3.5 rounded-xl hover:bg-white/20 transition-colors">Verify Profile</a>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <p class="text-white/60 text-xs leading-relaxed border-l-2 border-white/20 pl-5">This profile is shared publicly with your consent as part of the CyberEdge Academy Talent Network. Verified credentials are confirmed independently by KPITB.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /max-w -->
+  </main>
+</div><!-- /flex -->
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let currentUser = null;
+let currentProfile = null;
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type === 'success' ? '#00C896' : '#ef4444';
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+function toggleEdit() {
+  const panel = document.getElementById('edit-panel');
+  panel.classList.toggle('open');
+  const btn = document.getElementById('edit-toggle-btn');
+  const isOpen = panel.classList.contains('open');
+  btn.innerHTML = isOpen
+    ? '<span class="material-symbols-outlined text-sm">close</span> Close Edit'
+    : '<span class="material-symbols-outlined text-sm">edit</span> Edit Profile';
+  if (isOpen) panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function init() {
+  currentUser = await requireAuth('/public/login.html');
+  if (!currentUser) return;
+
+  currentProfile = await getProfile(currentUser.id);
+  if (!currentProfile) return;
+
+  renderProfile(currentProfile);
+  prefillEditForm(currentProfile);
+  loadCourses();
+}
+
+function renderProfile(p) {
+  const name     = p.full_name || currentUser.email;
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+  document.getElementById('avatar-initials').textContent = initials;
+  document.getElementById('p-name').textContent          = name;
+  document.getElementById('p-title').textContent         = p.job_title || (p.education_field ? `${p.education_field} Graduate` : 'CyberEdge Student');
+  document.getElementById('p-location').textContent      = [p.city, p.district, 'Khyber Pakhtunkhwa'].filter(Boolean).join(', ');
+
+  // Bio
+  if (p.bio) {
+    document.getElementById('p-bio').textContent = p.bio;
+    document.getElementById('p-bio-wrap').classList.remove('hidden');
+  }
+
+  // Skills
+  const skillsEl = document.getElementById('skills-verified');
+  const skills = p.skills || [];
+  if (skills.length) {
+    skillsEl.innerHTML = skills.map(s => `
+      <span class="skill-chip bg-[#00C896]/10 text-[#007a6b] border border-[#00C896]/20">
+        <span class="material-symbols-outlined text-sm text-[#00C896]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+        ${s}
+      </span>`).join('');
+  } else {
+    skillsEl.innerHTML = `<p class="text-slate-400 text-sm">No skills added yet. <a href="#" onclick="toggleEdit();return false;" class="text-[#007BFF] underline">Add skills →</a></p>`;
+  }
+
+  // Links
+  const links = [];
+  if (p.linkedin)  links.push({ icon:'badge',    label:'LinkedIn',  href: p.linkedin.startsWith('http') ? p.linkedin : 'https://'+p.linkedin });
+  if (p.portfolio) links.push({ icon:'code',      label:'Portfolio / GitHub', href: p.portfolio.startsWith('http') ? p.portfolio : 'https://'+p.portfolio });
+  if (p.twitter)   links.push({ icon:'alternate_email', label:'Twitter / X', href:'https://x.com/'+p.twitter.replace('@','') });
+
+  if (links.length) {
+    document.getElementById('p-links-section').classList.remove('hidden');
+    document.getElementById('p-links').innerHTML = links.map(l => `
+      <a href="${l.href}" target="_blank" class="flex items-center gap-3 bg-white border border-[#007BFF]/10 px-6 py-4 rounded-xl hover:shadow-md transition-shadow">
+        <span class="material-symbols-outlined text-[#007BFF]">${l.icon}</span>
+        <span class="headline font-bold text-sm text-[#1A2332]">${l.label}</span>
+      </a>`).join('');
+  }
+
+  // Contact CTA
+  document.getElementById('cta-title').textContent = `Interested in connecting with ${name.split(' ')[0]}?`;
+  document.getElementById('cta-email').href        = `mailto:${currentUser.email}`;
+  document.getElementById('cta-email').textContent = `Connect with ${name.split(' ')[0]}`;
+}
+
+function prefillEditForm(p) {
+  document.getElementById('e-name').value      = p.full_name  || '';
+  document.getElementById('e-phone').value     = p.phone      || '';
+  document.getElementById('e-city').value      = p.city       || '';
+  document.getElementById('e-title').value     = p.job_title  || '';
+  document.getElementById('e-linkedin').value  = p.linkedin   || '';
+  document.getElementById('e-portfolio').value = p.portfolio  || '';
+  document.getElementById('e-bio').value       = p.bio        || '';
+}
+
+async function saveProfile() {
+  const errEl = document.getElementById('edit-err');
+  const sucEl = document.getElementById('edit-suc');
+  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+
+  const payload = {
+    full_name:  document.getElementById('e-name').value.trim(),
+    phone:      document.getElementById('e-phone').value.trim(),
+    city:       document.getElementById('e-city').value.trim(),
+    job_title:  document.getElementById('e-title').value.trim(),
+    linkedin:   document.getElementById('e-linkedin').value.trim(),
+    portfolio:  document.getElementById('e-portfolio').value.trim(),
+    bio:        document.getElementById('e-bio').value.trim(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
+
+  const pass = document.getElementById('e-pass').value;
+  if (!error && pass) {
+    const { error: pErr } = await sb.auth.updateUser({ password: pass });
+    if (pErr) { errEl.textContent = pErr.message; errEl.classList.remove('hidden'); return; }
+  }
+
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+
+  sucEl.textContent = 'Profile saved!'; sucEl.classList.remove('hidden');
+  showToast('Profile updated!');
+  currentProfile = { ...currentProfile, ...payload };
+  renderProfile(currentProfile);
+  setTimeout(() => { sucEl.classList.add('hidden'); toggleEdit(); }, 1500);
+}
+
+async function loadCourses() {
+  const { data: enrollments } = await sb
+    .from('enrollments')
+    .select('*, courses(*)')
+    .eq('student_id', currentUser.id)
+    .order('enrolled_at', { ascending: false });
+
+  // Certifications
+  const certsEl = document.getElementById('certs-list');
+  const completed = (enrollments || []).filter(e => e.status === 'completed' || e.progress_percent >= 80);
+  if (completed.length) {
+    certsEl.innerHTML = completed.map(e => `
+      <div class="p-7 flex items-center gap-5">
+        <div class="w-12 h-12 rounded-xl bg-[#007BFF]/10 flex items-center justify-center text-[#007BFF] shrink-0">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">workspace_premium</span>
+        </div>
+        <div class="flex-1">
+          <p class="headline font-bold text-[#007BFF]">${e.courses?.title || 'CyberEdge Program'}</p>
+          <p class="text-xs text-[#6B7C93] mt-1">Issued by CyberEdge Academy · Government of Khyber Pakhtunkhwa / KPITB</p>
+          <p class="text-xs text-[#6B7C93] mt-1">${e.courses?.level || 'Advanced Track'} · ${e.courses?.duration_weeks || 12} Weeks</p>
+        </div>
+        <a href="/student/course-certificate.html?course=${e.course_id}" class="text-sm headline font-bold text-[#00C896] hover:text-[#007BFF] transition-colors whitespace-nowrap">View →</a>
+      </div>`).join('');
+  } else {
+    certsEl.innerHTML = `<div class="p-7 flex items-center gap-5">
+      <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+        <span class="material-symbols-outlined">workspace_premium</span>
+      </div>
+      <div>
+        <p class="font-bold text-slate-500">No certificates yet</p>
+        <p class="text-xs text-slate-400 mt-1">Complete a course to earn your government-backed certificate.</p>
+      </div>
+      <a href="/public/courses.html" class="ml-auto text-sm headline font-bold text-[#007BFF]">Browse Courses →</a>
+    </div>`;
+  }
+
+  // Courses
+  const coursesEl = document.getElementById('courses-list');
+  if (!enrollments?.length) {
+    coursesEl.innerHTML = `<p class="text-slate-400 text-sm">No programs enrolled yet. <a href="/public/courses.html" class="text-[#007BFF] font-bold">Browse Courses →</a></p>`;
+    return;
+  }
+  coursesEl.innerHTML = enrollments.map(e => `
+    <div class="bg-white p-7 rounded-2xl border border-[#007BFF]/5 flex gap-5 hover:shadow-md transition-shadow">
+      <div class="w-12 h-12 rounded-xl brand-gradient flex items-center justify-center text-white shrink-0">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">school</span>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-wrap items-baseline gap-x-3">
+          <h4 class="headline font-bold text-[#007BFF]">${e.courses?.title || 'Course'}</h4>
+          <span class="text-xs text-[#6B7C93] font-semibold uppercase tracking-wider">CyberEdge Academy</span>
+        </div>
+        <p class="text-xs text-[#6B7C93] mt-1 mb-3">${new Date(e.enrolled_at).toLocaleDateString('en-PK', { year:'numeric', month:'long' })} · ${e.courses?.level || ''}</p>
+        <div class="flex items-center gap-3">
+          <div class="flex-1 max-w-xs h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full brand-gradient rounded-full" style="width:${e.progress_percent || 0}%"></div>
+          </div>
+          <span class="text-xs font-bold text-[#6B7C93]">${e.progress_percent || 0}% complete</span>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-full ${e.status === 'completed' ? 'bg-[#f0fff8] text-[#009e76]' : 'bg-[#eff4ff] text-[#007BFF]'}">${e.status}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+init();
+</script>
+</body>
+</html>

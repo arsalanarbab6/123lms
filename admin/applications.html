@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Applications | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/admin/dashboard.html"      class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/admin/courses.html"        class="sl"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+    <a href="/admin/users.html"          class="sl"><span class="material-symbols-outlined">people</span>Users</a>
+    <a href="/admin/applications.html"   class="sl active"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+    <a href="/admin/attendance.html"     class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/admin/announcements.html"  class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+    <a href="/admin/analytics.html"      class="sl"><span class="material-symbols-outlined">insights</span>Analytics</a>
+    <a href="/admin/settings.html"       class="sl"><span class="material-symbols-outlined">settings</span>Settings</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4">
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="flex-1 p-8">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="headline text-3xl font-bold text-[#0A2540]">Student Applications</h1>
+      <p class="text-slate-400 mt-1">Review and update application statuses.</p>
+    </div>
+  </div>
+
+  <!-- Status filters -->
+  <div class="flex gap-2 mb-6 flex-wrap">
+    <button data-s="all"         class="sf-btn active-sf px-4 py-2 rounded-full text-sm font-bold bg-[#0A2540] text-white">All</button>
+    <button data-s="pending"     class="sf-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Pending</button>
+    <button data-s="screening"   class="sf-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Screening</button>
+    <button data-s="shortlisted" class="sf-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Shortlisted</button>
+    <button data-s="accepted"    class="sf-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Accepted</button>
+    <button data-s="rejected"    class="sf-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 text-slate-600">Rejected</button>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 text-left">
+        <tr>
+          <th class="p-4">Applicant</th>
+          <th class="p-4 hidden md:table-cell">Applied</th>
+          <th class="p-4">Status</th>
+          <th class="p-4">Update Status</th>
+        </tr>
+      </thead>
+      <tbody id="app-tbody">
+        <tr><td colspan="4" class="p-10 text-center text-slate-400">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="text-xs text-slate-400 mt-3" id="app-count"></p>
+</main>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let allApps = [], currentFilter = 'all';
+
+function showToast(msg, type='success'){const t=document.getElementById('toast');t.textContent=msg;t.style.background=type==='success'?'#00C896':'#ef4444';t.style.opacity='1';setTimeout(()=>{t.style.opacity='0';},3000);}
+
+const statusConfig = {
+  pending:     {color:'bg-yellow-50 text-yellow-600', label:'Pending'},
+  screening:   {color:'bg-blue-50 text-blue-600',    label:'Screening'},
+  shortlisted: {color:'bg-purple-50 text-purple-600',label:'Shortlisted'},
+  accepted:    {color:'bg-[#f0fff8] text-[#009e76]', label:'Accepted'},
+  rejected:    {color:'bg-red-50 text-red-500',       label:'Rejected'},
+};
+
+async function init() {
+  await requireRole(['admin'],'/student/dashboard.html');
+  loadApps();
+}
+
+async function loadApps() {
+  const { data, error } = await sb.from('applications')
+    .select('*, profiles!applicant_id(full_name,email,district,education_degree), courses(title)')
+    .order('submitted_at',{ascending:false});
+  if (error) { document.getElementById('app-tbody').innerHTML=`<tr><td colspan="4" class="p-8 text-center text-red-500">${error.message}</td></tr>`; return; }
+  allApps = data || [];
+  renderApps(allApps);
+}
+
+function renderApps(apps) {
+  document.getElementById('app-count').textContent = `Showing ${apps.length} application${apps.length!==1?'s':''}`;
+  const tbody = document.getElementById('app-tbody');
+  if (!apps.length) { tbody.innerHTML=`<tr><td colspan="4" class="p-10 text-center text-slate-400">No applications found.</td></tr>`; return; }
+  tbody.innerHTML = apps.map(a => {
+    const cfg = statusConfig[a.status] || statusConfig.pending;
+    return `
+    <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+      <td class="p-4">
+        <p class="font-bold text-[#0A2540]">${a.profiles?.full_name || '-'}</p>
+        <p class="text-xs text-slate-400">${a.profiles?.email || ''}</p>
+        <p class="text-xs text-slate-400">${a.profiles?.district || ''} · ${a.profiles?.education_degree || ''}</p>
+        ${a.courses?`<p class="text-xs text-[#007BFF] font-bold mt-1">Course: ${a.courses.title}</p>`:''}
+      </td>
+      <td class="p-4 text-slate-400 text-xs hidden md:table-cell">${new Date(a.submitted_at).toLocaleDateString()}</td>
+      <td class="p-4"><span class="text-xs font-bold px-3 py-1 rounded-full ${cfg.color}">${cfg.label}</span></td>
+      <td class="p-4">
+        <select onchange="updateStatus('${a.id}', this.value, '${a.applicant_id}')"
+          class="border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:border-[#007BFF] bg-white">
+          ${Object.entries(statusConfig).map(([v,c])=>`<option value="${v}" ${a.status===v?'selected':''}>${c.label}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function updateStatus(appId, newStatus, applicantId) {
+  const { error } = await sb.from('applications').update({ status:newStatus, reviewed_at:new Date().toISOString() }).eq('id', appId);
+  if (error) { showToast(error.message,'error'); return; }
+
+  // If accepted → auto-enroll (pick first available course or assigned course)
+  if (newStatus === 'accepted') {
+    const app = allApps.find(a=>a.id===appId);
+    if (app?.course_id) {
+      await sb.from('enrollments').insert({ student_id:applicantId, course_id:app.course_id }).eq('student_id',applicantId);
+    }
+    // Send notification
+    await sb.from('notifications').insert({ user_id:applicantId, title:'Application Accepted!', message:'Congratulations! Your application has been accepted. Check your allocation result.', category:'alert' });
+  } else if (newStatus === 'rejected') {
+    await sb.from('notifications').insert({ user_id:applicantId, title:'Application Update', message:'Thank you for applying. Unfortunately you were not selected for this cycle.', category:'system' });
+  }
+
+  const idx = allApps.findIndex(a=>a.id===appId);
+  if (idx!==-1) allApps[idx].status = newStatus;
+  showToast(`Status updated to ${newStatus}`);
+  renderApps(currentFilter==='all' ? allApps : allApps.filter(a=>a.status===currentFilter));
+}
+
+// Filter buttons
+document.querySelectorAll('.sf-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentFilter = btn.dataset.s;
+    document.querySelectorAll('.sf-btn').forEach(b=>{b.classList.remove('bg-[#0A2540]','text-white');b.classList.add('bg-white','border','border-slate-200','text-slate-600');});
+    btn.classList.add('bg-[#0A2540]','text-white'); btn.classList.remove('bg-white','border','border-slate-200','text-slate-600');
+    renderApps(currentFilter==='all' ? allApps : allApps.filter(a=>a.status===currentFilter));
+  });
+});
+
+init();
+</script>
+</body>
+</html>

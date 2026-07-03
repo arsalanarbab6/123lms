@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Instructor Dashboard | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+
+<!-- INSTRUCTOR SIDEBAR -->
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8">
+    <p class="headline font-black text-xl text-white">Instructor Portal</p>
+    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">CyberEdge Academy</p>
+  </div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/instructor/dashboard.html"      class="sl active"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/instructor/my-courses.html"     class="sl"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+    <a href="/instructor/students.html"       class="sl"><span class="material-symbols-outlined">people</span>Students</a>
+    <a href="/instructor/assignments.html"    class="sl"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+    <a href="/instructor/attendance.html"     class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/instructor/sessions.html"       class="sl"><span class="material-symbols-outlined">video_call</span>Sessions</a>
+    <a href="/instructor/announcements.html"  class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4 space-y-1">
+    <div class="flex items-center gap-3 px-4 py-3">
+      <div class="w-9 h-9 sig-grad rounded-full flex items-center justify-center text-white font-bold text-xs headline" id="inst-init">?</div>
+      <div><p class="text-white text-sm font-bold" id="inst-name">Instructor</p><p class="text-slate-500 text-xs">Instructor</p></div>
+    </div>
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20">
+      <span class="material-symbols-outlined">logout</span>Logout
+    </button>
+  </div>
+</aside>
+
+<main class="flex-1 flex flex-col">
+  <header class="bg-white shadow-sm sticky top-0 z-40 px-8 py-4 flex justify-between items-center">
+    <div>
+      <h1 class="headline font-black text-xl text-[#0A2540]" id="welcome-text">Welcome back!</h1>
+      <p class="text-slate-400 text-xs" id="date-text"></p>
+    </div>
+    <a href="/instructor/announcements.html" class="sig-grad text-white font-bold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">campaign</span> New Announcement
+    </a>
+  </header>
+
+  <div class="p-8 space-y-8">
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#007BFF] text-3xl block mb-3">people</span>
+        <p class="headline text-4xl font-black text-[#0A2540]" id="s-students">-</p>
+        <p class="text-sm text-slate-400 mt-1">My Students</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#009e76] text-3xl block mb-3">auto_stories</span>
+        <p class="headline text-4xl font-black text-[#0A2540]" id="s-courses">-</p>
+        <p class="text-sm text-slate-400 mt-1">My Courses</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#f59e0b] text-3xl block mb-3">assignment</span>
+        <p class="headline text-4xl font-black text-[#0A2540]" id="s-pending">-</p>
+        <p class="text-sm text-slate-400 mt-1">Pending Reviews</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-slate-100">
+        <span class="material-symbols-outlined text-[#00C896] text-3xl block mb-3">event_available</span>
+        <p class="headline text-4xl font-black text-[#0A2540]" id="s-sessions">-</p>
+        <p class="text-sm text-slate-400 mt-1">Sessions This Week</p>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <a href="/instructor/assignments.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#007BFF]/30 hover:shadow-md transition-all group">
+        <span class="material-symbols-outlined text-3xl text-[#007BFF] mb-4 block">rate_review</span>
+        <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Review Assignments</h3>
+        <p class="text-slate-500 text-sm">Grade student submissions and provide feedback.</p>
+        <span class="text-[#007BFF] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">Go to Assignments →</span>
+      </a>
+      <a href="/instructor/attendance.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#009e76]/30 hover:shadow-md transition-all group">
+        <span class="material-symbols-outlined text-3xl text-[#009e76] mb-4 block">how_to_reg</span>
+        <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Mark Attendance</h3>
+        <p class="text-slate-500 text-sm">Record attendance for today's session.</p>
+        <span class="text-[#009e76] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">Mark Now →</span>
+      </a>
+      <a href="/instructor/students.html" class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-[#f59e0b]/30 hover:shadow-md transition-all group">
+        <span class="material-symbols-outlined text-3xl text-[#f59e0b] mb-4 block">people</span>
+        <h3 class="headline font-bold text-lg text-[#0A2540] mb-2">Student List</h3>
+        <p class="text-slate-500 text-sm">View and manage your enrolled students.</p>
+        <span class="text-[#f59e0b] font-bold text-sm mt-4 block group-hover:translate-x-1 transition-transform">View Students →</span>
+      </a>
+    </div>
+
+    <!-- Recent Submissions -->
+    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <div class="flex justify-between items-center p-6 border-b border-slate-100">
+        <h2 class="headline font-bold text-lg text-[#0A2540]">Recent Submissions (Pending Review)</h2>
+        <a href="/instructor/assignments.html" class="text-[#007BFF] font-bold text-sm">View All →</a>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 text-left">
+          <tr><th class="p-4">Student</th><th class="p-4">Assignment</th><th class="p-4">Submitted</th><th class="p-4">Status</th></tr>
+        </thead>
+        <tbody id="recent-subs">
+          <tr><td colspan="4" class="p-8 text-center text-slate-400">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+async function init() {
+  const auth = await requireRole(['admin','instructor'], '/student/dashboard.html');
+  if (!auth) return;
+  const name = auth.profile.full_name || auth.user.email;
+  const init2 = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('inst-init').textContent = init2;
+  document.getElementById('inst-name').textContent = name;
+  document.getElementById('welcome-text').textContent = `Welcome back, ${name.split(' ')[0]}!`;
+  document.getElementById('date-text').textContent = new Date().toLocaleDateString('en-PK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // My courses
+  const { data: myCourses } = await sb.from('courses').select('id').eq('created_by', auth.user.id);
+  const courseIds = (myCourses || []).map(c=>c.id);
+  document.getElementById('s-courses').textContent = courseIds.length;
+
+  // Students enrolled in my courses
+  let studCount = 0;
+  if (courseIds.length) {
+    const { count } = await sb.from('enrollments').select('*',{count:'exact',head:true}).in('course_id', courseIds);
+    studCount = count || 0;
+  }
+  document.getElementById('s-students').textContent = studCount;
+
+  // Pending submissions (ungraded)
+  const { count: pending } = await sb.from('submissions').select('*',{count:'exact',head:true}).is('grade', null);
+  document.getElementById('s-pending').textContent = pending || 0;
+
+  // Sessions this week
+  const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekEnd   = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+  const { count: sess } = await sb.from('sessions').select('*',{count:'exact',head:true})
+    .gte('session_date', weekStart.toISOString()).lte('session_date', weekEnd.toISOString());
+  document.getElementById('s-sessions').textContent = sess || 0;
+
+  // Recent ungraded submissions
+  const { data: subs } = await sb.from('submissions')
+    .select('*, assignments(title), profiles!student_id(full_name,email)')
+    .is('grade', null).order('submitted_at',{ascending:false}).limit(8);
+
+  const tbody = document.getElementById('recent-subs');
+  if (!subs?.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400">No pending submissions to review.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = subs.map(s=>`
+    <tr class="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+      <td class="p-4 font-bold text-[#0A2540]">${s.profiles?.full_name || s.profiles?.email || '-'}</td>
+      <td class="p-4 text-slate-600">${s.assignments?.title || '-'}</td>
+      <td class="p-4 text-slate-400 text-xs">${new Date(s.submitted_at).toLocaleDateString()}</td>
+      <td class="p-4"><a href="/instructor/assignments.html" class="bg-[#fff3e0] text-[#f59e0b] text-xs font-bold px-3 py-1 rounded-full">Pending Review</a></td>
+    </tr>`).join('');
+}
+init();
+</script>
+</body>
+</html>

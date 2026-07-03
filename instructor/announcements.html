@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Announcements | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><p class="headline font-black text-xl text-white">Instructor Portal</p></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/instructor/dashboard.html"     class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/instructor/my-courses.html"    class="sl"><span class="material-symbols-outlined">auto_stories</span>My Courses</a>
+    <a href="/instructor/students.html"      class="sl"><span class="material-symbols-outlined">people</span>Students</a>
+    <a href="/instructor/assignments.html"   class="sl"><span class="material-symbols-outlined">assignment</span>Assignments</a>
+    <a href="/instructor/attendance.html"    class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/instructor/sessions.html"      class="sl"><span class="material-symbols-outlined">video_call</span>Sessions</a>
+    <a href="/instructor/announcements.html" class="sl active"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4">
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="flex-1 p-8">
+  <div class="mb-8">
+    <h1 class="headline text-3xl font-bold text-[#0A2540]">Announcements</h1>
+    <p class="text-slate-400 mt-1">Broadcast messages to your students as notifications.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Compose -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm">
+      <h3 class="headline text-xl font-bold text-[#0A2540] mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#007BFF]">edit_note</span> Compose New
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Title *</label>
+          <input id="ann-title" type="text" placeholder="Assignment deadline reminder..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]"/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Message *</label>
+          <textarea id="ann-message" rows="4" placeholder="Dear students, please remember..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:outline-none focus:border-[#007BFF]"></textarea>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Category</label>
+          <select id="ann-category" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]">
+            <option value="course">Course Update</option>
+            <option value="alert">Alert / Urgent</option>
+            <option value="system">General / System</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 block mb-2">Send To</label>
+          <select id="ann-course" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#007BFF]">
+            <option value="">All my students</option>
+          </select>
+        </div>
+        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-[#eff4ff]">
+          <input type="checkbox" id="ann-global" class="w-5 h-5 accent-[#007BFF]"/>
+          <div>
+            <p class="font-bold text-sm text-[#0A2540]">Global Announcement</p>
+            <p class="text-xs text-slate-400">Sends to ALL students on the platform</p>
+          </div>
+        </label>
+        <p id="ann-err" class="text-red-500 text-sm hidden"></p>
+        <p id="ann-suc" class="text-[#009e76] text-sm hidden"></p>
+        <button onclick="sendAnnouncement()" class="w-full sig-grad text-white headline font-bold py-4 rounded-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="send-btn">
+          <span class="material-symbols-outlined">send</span> Send Announcement
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent announcements -->
+    <div>
+      <h3 class="headline font-bold text-[#0A2540] mb-4">Recent Announcements</h3>
+      <div id="ann-list" class="space-y-4">
+        <p class="text-slate-400 text-center py-8">Loading...</p>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-3 rounded-xl font-bold text-sm text-white opacity-0 transition-opacity pointer-events-none"></div>
+
+<script>
+let currentUser;
+function showToast(msg, type='success'){const t=document.getElementById('toast');t.textContent=msg;t.style.background=type==='success'?'#00C896':'#ef4444';t.style.opacity='1';setTimeout(()=>{t.style.opacity='0';},3000);}
+
+async function init() {
+  const auth = await requireRole(['admin','instructor'],'/student/dashboard.html');
+  if (!auth) return;
+  currentUser = auth.user;
+  // Load courses for dropdown
+  const { data: courses } = await sb.from('courses').select('id,title').order('title');
+  const sel = document.getElementById('ann-course');
+  (courses||[]).forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.title;sel.appendChild(o);});
+  loadAnnouncements();
+}
+
+async function loadAnnouncements() {
+  const { data } = await sb.from('announcements').select('*, profiles!created_by(full_name)').order('created_at',{ascending:false}).limit(20);
+  const list = document.getElementById('ann-list');
+  if (!data?.length) { list.innerHTML='<p class="text-slate-400 text-center py-8">No announcements yet.</p>'; return; }
+  const catColors = {course:'text-[#007BFF] bg-[#eff4ff]', alert:'text-red-500 bg-red-50', system:'text-slate-500 bg-slate-100'};
+  list.innerHTML = data.map(a=>`
+    <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <h4 class="headline font-bold text-[#0A2540]">${a.title}</h4>
+        <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full flex-shrink-0 ${catColors[a.category]||catColors.system}">${a.category}</span>
+      </div>
+      <p class="text-sm text-slate-600 mb-3">${a.message||''}</p>
+      <div class="flex items-center justify-between text-xs text-slate-400 font-bold">
+        <span>By ${a.profiles?.full_name||'Instructor'}</span>
+        <span>${new Date(a.created_at).toLocaleString()}</span>
+      </div>
+    </div>`).join('');
+}
+
+async function sendAnnouncement() {
+  const title   = document.getElementById('ann-title').value.trim();
+  const message = document.getElementById('ann-message').value.trim();
+  const category= document.getElementById('ann-category').value;
+  const courseId= document.getElementById('ann-course').value || null;
+  const isGlobal= document.getElementById('ann-global').checked;
+  const errEl   = document.getElementById('ann-err');
+  const sucEl   = document.getElementById('ann-suc');
+  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+
+  if (!title||!message) { errEl.textContent='Title and message are required.'; errEl.classList.remove('hidden'); return; }
+
+  const btn = document.getElementById('send-btn'); btn.disabled=true; btn.textContent='Sending...';
+
+  // Save announcement
+  const { error: annErr } = await sb.from('announcements').insert({ title, message, category, course_id:courseId, created_by:currentUser.id, is_global:isGlobal });
+  if (annErr) { btn.disabled=false; btn.innerHTML='<span class="material-symbols-outlined">send</span> Send Announcement'; errEl.textContent=annErr.message; errEl.classList.remove('hidden'); return; }
+
+  // Send as notifications to students
+  let students = [];
+  if (isGlobal) {
+    const { data } = await sb.from('profiles').select('id').eq('role','student');
+    students = data || [];
+  } else if (courseId) {
+    const { data } = await sb.from('enrollments').select('student_id').eq('course_id', courseId);
+    students = (data||[]).map(e=>({id:e.student_id}));
+  }
+
+  if (students.length) {
+    const notifs = students.map(s=>({ user_id:s.id, title, message, category }));
+    // Insert in batches of 100
+    for (let i=0; i<notifs.length; i+=100) {
+      await sb.from('notifications').insert(notifs.slice(i,i+100));
+    }
+  }
+
+  btn.disabled=false; btn.innerHTML='<span class="material-symbols-outlined">send</span> Send Announcement';
+  document.getElementById('ann-title').value='';
+  document.getElementById('ann-message').value='';
+  sucEl.textContent = `Sent to ${students.length} student${students.length!==1?'s':''}!`;
+  sucEl.classList.remove('hidden');
+  showToast('Announcement sent!');
+  loadAnnouncements();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .glow-text{text-shadow:0 0 15px rgba(96,252,198,.3)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] min-h-screen flex flex-col">
+
+<main class="flex-grow flex items-stretch overflow-hidden">
+
+  <!-- LEFT — branding panel -->
+  <section class="hidden lg:flex flex-col justify-between w-[45%] bg-[#0a2540] p-16 relative overflow-hidden">
+    <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-[#0059bb] opacity-10 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-5%] left-[-5%] w-64 h-64 bg-[#009e76] opacity-10 rounded-full blur-[80px]"></div>
+
+    <a href="/public/index.html" class="z-10 flex items-center gap-3">
+      <div class="w-10 h-10 sig-grad rounded-lg flex items-center justify-center">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1">shield_lock</span>
+      </div>
+      <span class="headline font-black text-2xl tracking-tighter text-white">CyberEdge Academy</span>
+    </a>
+
+    <div class="z-10 max-w-lg">
+      <h1 class="headline text-6xl font-bold text-white leading-tight tracking-tight mb-8">
+        Unlock the <br/><span class="text-[#009e76] glow-text">Next Frontier</span>
+      </h1>
+      <p class="text-[#768dad] text-lg leading-relaxed mb-12">
+        Join the elite ranks of cybersecurity professionals. Secure the infrastructure of tomorrow.
+      </p>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="p-6 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4">
+          <span class="material-symbols-outlined text-[#009e76]">verified_user</span>
+          <div><p class="text-white font-semibold text-sm">Gov-Grade Security</p><p class="text-[#768dad] text-xs mt-1">NIST Compliant</p></div>
+        </div>
+        <div class="p-6 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4">
+          <span class="material-symbols-outlined text-[#0059bb]">terminal</span>
+          <div><p class="text-white font-semibold text-sm">Real-time Labs</p><p class="text-[#768dad] text-xs mt-1">Live simulation</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="z-10 text-sm text-[#768dad]">System V.4.0 // Edge Protocol Active</div>
+  </section>
+
+  <!-- RIGHT — login form -->
+  <section class="flex-grow flex flex-col justify-center items-center px-8 lg:px-24 bg-[#f8f9ff] py-20 relative">
+    <div class="w-full max-w-md">
+
+      <!-- Mobile logo -->
+      <a href="/public/index.html" class="lg:hidden flex items-center gap-3 mb-12">
+        <div class="w-8 h-8 sig-grad rounded-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings:'FILL' 1">shield_lock</span>
+        </div>
+        <span class="headline font-black text-xl tracking-tighter text-[#000f22]">CyberEdge Academy</span>
+      </a>
+
+      <h2 class="headline text-4xl font-bold text-[#001c37] mb-2">Welcome back.</h2>
+      <p class="text-[#43474d] mb-8">Access your secure terminal to resume training.</p>
+
+      <form id="loginForm" class="space-y-5">
+        <div>
+          <label class="text-xs font-bold text-[#43474d] uppercase tracking-wider">Email</label>
+          <input id="email" type="email" required placeholder="you@example.com"
+            class="w-full mt-1 h-14 px-5 rounded-2xl bg-white border border-[#c4c6ce]/30 focus:outline-none focus:ring-2 focus:ring-[#007BFF]/30 focus:border-[#007BFF] text-[#001c37] font-medium transition-all"/>
+        </div>
+        <div>
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-bold text-[#43474d] uppercase tracking-wider">Password</label>
+            <a href="/public/forgot-password.html" class="text-xs font-bold text-[#0059bb] hover:underline">Forgot password?</a>
+          </div>
+          <div class="relative">
+            <input id="password" type="password" required placeholder="••••••••"
+              class="w-full mt-1 h-14 px-5 pr-12 rounded-2xl bg-white border border-[#c4c6ce]/30 focus:outline-none focus:ring-2 focus:ring-[#007BFF]/30 focus:border-[#007BFF] text-[#001c37] font-medium transition-all"/>
+            <button type="button" onclick="togglePw()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#74777e]">
+              <span class="material-symbols-outlined" id="eye-icon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <p id="err" class="text-red-500 text-sm hidden"></p>
+
+        <button type="submit" id="submitBtn"
+          class="w-full h-14 sig-grad text-white headline font-bold text-lg rounded-2xl shadow-lg hover:scale-[1.02] active:scale-[.98] transition-all">
+          Sign In to Academy
+        </button>
+      </form>
+
+      <p class="mt-8 text-center text-sm text-[#43474d]">
+        New operative? <a href="/public/signup.html" class="font-extrabold text-[#009e76] hover:underline">Apply for Access</a>
+      </p>
+    </div>
+    <p class="absolute bottom-6 text-[10px] font-bold text-[#c4c6ce] uppercase tracking-widest">System V.4.0.2 // Edge Protocol Active</p>
+  </section>
+</main>
+
+<script>
+function togglePw() {
+  const inp = document.getElementById("password");
+  const ico = document.getElementById("eye-icon");
+  inp.type = inp.type === "password" ? "text" : "password";
+  ico.textContent = inp.type === "password" ? "visibility" : "visibility_off";
+}
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  const err = document.getElementById("err");
+  err.classList.add("hidden");
+  btn.disabled = true; btn.textContent = "Signing in...";
+
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+  });
+
+  if (error) {
+    btn.disabled = false; btn.textContent = "Sign In to Academy";
+    err.textContent = error.message; err.classList.remove("hidden");
+    return;
+  }
+
+  // Role-based redirect
+  const profile = await getProfile(data.user.id);
+  if (profile?.role === "admin")      window.location.href = "/admin/dashboard.html";
+  else if (profile?.role === "instructor") window.location.href = "/instructor/dashboard.html";
+  else                                 window.location.href = "/student/dashboard.html";
+});
+</script>
+</body>
+</html>

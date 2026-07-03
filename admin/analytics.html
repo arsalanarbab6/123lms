@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Analytics | CyberEdge Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+body{font-family:'Manrope',sans-serif}.headline{font-family:'Space Grotesk',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+.sl{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-weight:600;font-size:.875rem;color:#94a3b8;transition:all .15s}
+.sl:hover{background:rgba(255,255,255,.08);color:#fff}.sl.active{background:rgba(255,255,255,.12);color:#fff}
+</style>
+</head>
+<body class="bg-[#f8f9ff]">
+<div class="flex min-h-screen">
+<aside class="hidden md:flex flex-col h-screen sticky top-0 w-64 bg-[#0A2540] py-6">
+  <div class="px-6 mb-8"><a href="/public/index.html" class="headline font-black text-xl text-white block">CyberEdge Admin</a></div>
+  <nav class="flex-1 px-3 space-y-1">
+    <a href="/admin/dashboard.html"     class="sl"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+    <a href="/admin/courses.html"       class="sl"><span class="material-symbols-outlined">menu_book</span>Courses</a>
+    <a href="/admin/users.html"         class="sl"><span class="material-symbols-outlined">people</span>Users</a>
+    <a href="/admin/applications.html"  class="sl"><span class="material-symbols-outlined">assignment_ind</span>Applications</a>
+    <a href="/admin/attendance.html"    class="sl"><span class="material-symbols-outlined">event_available</span>Attendance</a>
+    <a href="/admin/announcements.html" class="sl"><span class="material-symbols-outlined">campaign</span>Announcements</a>
+    <a href="/admin/analytics.html"     class="sl active"><span class="material-symbols-outlined">insights</span>Analytics</a>
+    <a href="/admin/settings.html"      class="sl"><span class="material-symbols-outlined">settings</span>Settings</a>
+  </nav>
+  <div class="px-3 mt-auto border-t border-white/10 pt-4">
+    <button onclick="signOut()" class="sl w-full text-left text-red-400 hover:bg-red-900/20"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="flex-1 p-8">
+  <div class="mb-8">
+    <h1 class="headline text-3xl font-bold text-[#0A2540]">Academy Insights</h1>
+    <p class="text-slate-400 mt-1">Live statistics from the Supabase database.</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-[#007BFF]/5 rounded-full -translate-y-4 translate-x-4"></div>
+      <span class="material-symbols-outlined text-[#007BFF] text-3xl block mb-3">people</span>
+      <p class="headline text-4xl font-black text-[#0A2540]" id="kpi-students">-</p>
+      <p class="text-sm text-slate-400 mt-1">Total Students</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-[#009e76]/5 rounded-full -translate-y-4 translate-x-4"></div>
+      <span class="material-symbols-outlined text-[#009e76] text-3xl block mb-3">how_to_reg</span>
+      <p class="headline text-4xl font-black text-[#0A2540]" id="kpi-enrollments">-</p>
+      <p class="text-sm text-slate-400 mt-1">Total Enrollments</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-[#f59e0b]/5 rounded-full -translate-y-4 translate-x-4"></div>
+      <span class="material-symbols-outlined text-[#f59e0b] text-3xl block mb-3">assignment_ind</span>
+      <p class="headline text-4xl font-black text-[#0A2540]" id="kpi-apps">-</p>
+      <p class="text-sm text-slate-400 mt-1">Applications</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-[#00C896]/5 rounded-full -translate-y-4 translate-x-4"></div>
+      <span class="material-symbols-outlined text-[#00C896] text-3xl block mb-3">task_alt</span>
+      <p class="headline text-4xl font-black text-[#0A2540]" id="kpi-completed">-</p>
+      <p class="text-sm text-slate-400 mt-1">Completions</p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-6">
+    <!-- Course enrollment breakdown -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8">
+      <h3 class="headline text-xl font-bold text-[#0A2540] mb-6">Enrollment by Course</h3>
+      <div id="course-chart" class="space-y-4">
+        <p class="text-slate-400 text-sm">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Application funnel -->
+    <div class="bg-white rounded-2xl border border-slate-100 p-8">
+      <h3 class="headline text-xl font-bold text-[#0A2540] mb-6">Application Funnel</h3>
+      <div id="funnel-chart" class="space-y-3">
+        <p class="text-slate-400 text-sm">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent signups -->
+  <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+    <div class="p-6 border-b border-slate-100">
+      <h3 class="headline font-bold text-lg text-[#0A2540]">Recent Signups</h3>
+    </div>
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 text-left">
+        <tr><th class="p-4">Name</th><th class="p-4">Email</th><th class="p-4">District</th><th class="p-4">Joined</th></tr>
+      </thead>
+      <tbody id="recent-users">
+        <tr><td colspan="4" class="p-8 text-center text-slate-400">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+async function init() {
+  await requireRole(['admin'],'/student/dashboard.html');
+
+  const [
+    { count: students },
+    { count: enrollments },
+    { count: apps },
+    { count: completed },
+    { data: courses },
+    { data: appStatuses },
+    { data: recentUsers },
+  ] = await Promise.all([
+    sb.from('profiles').select('*',{count:'exact',head:true}).eq('role','student'),
+    sb.from('enrollments').select('*',{count:'exact',head:true}),
+    sb.from('applications').select('*',{count:'exact',head:true}),
+    sb.from('enrollments').select('*',{count:'exact',head:true}).eq('status','completed'),
+    sb.from('courses').select('id,title,enrollments(count)').eq('is_published',true),
+    sb.from('applications').select('status'),
+    sb.from('profiles').select('full_name,email,district,created_at').eq('role','student').order('created_at',{ascending:false}).limit(10),
+  ]);
+
+  document.getElementById('kpi-students').textContent    = students || 0;
+  document.getElementById('kpi-enrollments').textContent = enrollments || 0;
+  document.getElementById('kpi-apps').textContent        = apps || 0;
+  document.getElementById('kpi-completed').textContent   = completed || 0;
+
+  // Course enrollment bars
+  const courseEl = document.getElementById('course-chart');
+  if (courses?.length) {
+    const maxE = Math.max(...courses.map(c => c.enrollments?.[0]?.count || 0), 1);
+    courseEl.innerHTML = courses.map(c => {
+      const cnt = c.enrollments?.[0]?.count || 0;
+      const pct = Math.round(cnt/maxE*100);
+      return `<div>
+        <div class="flex justify-between text-sm font-bold mb-1.5">
+          <span class="text-[#0A2540]">${c.title}</span>
+          <span class="text-[#007BFF]">${cnt}</span>
+        </div>
+        <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full sig-grad rounded-full" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Application funnel
+  const funnelEl = document.getElementById('funnel-chart');
+  const statuses = ['pending','screening','shortlisted','accepted','rejected'];
+  const statusColors = {pending:'#f59e0b',screening:'#007BFF',shortlisted:'#8b5cf6',accepted:'#009e76',rejected:'#ef4444'};
+  if (appStatuses?.length) {
+    const counts = {};
+    statuses.forEach(s => { counts[s] = appStatuses.filter(a=>a.status===s).length; });
+    funnelEl.innerHTML = statuses.map(s => {
+      const pct = apps ? Math.round(counts[s]/apps*100) : 0;
+      return `<div class="flex items-center gap-4">
+        <span class="w-24 text-xs font-bold text-slate-500 text-right capitalize">${s}</span>
+        <div class="flex-1 h-6 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full rounded-full flex items-center pl-2 transition-all" style="width:${Math.max(pct,2)}%;background:${statusColors[s]}">
+            <span class="text-white text-[10px] font-bold">${counts[s]}</span>
+          </div>
+        </div>
+        <span class="text-xs font-bold text-slate-400 w-8">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Recent signups
+  const tbody = document.getElementById('recent-users');
+  if (recentUsers?.length) {
+    tbody.innerHTML = recentUsers.map(u=>`
+      <tr class="border-t border-slate-100 hover:bg-slate-50">
+        <td class="p-4 font-bold text-[#0A2540]">${u.full_name||'-'}</td>
+        <td class="p-4 text-slate-500">${u.email||''}</td>
+        <td class="p-4 text-slate-400 text-xs">${u.district||'-'}</td>
+        <td class="p-4 text-slate-400 text-xs">${new Date(u.created_at).toLocaleDateString()}</td>
+      </tr>`).join('');
+  }
+}
+init();
+</script>
+</body>
+</html>

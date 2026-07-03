@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About | CyberEdge Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/app.js"></script>
+<style>
+  body{font-family:'Manrope',sans-serif}
+  .headline{font-family:'Space Grotesk',sans-serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+  .sig-grad{background:linear-gradient(135deg,#007BFF 0%,#00C896 100%)}
+  .glass{background:rgba(255,255,255,.8);backdrop-filter:blur(24px)}
+</style>
+</head>
+<body class="bg-[#f8f9ff] text-[#001c37]">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm h-20 flex justify-between items-center px-8">
+  <a href="/public/index.html" class="headline font-black text-2xl text-[#0A2540] tracking-tighter">The Neon Academy</a>
+  <div class="hidden md:flex gap-8 text-sm font-bold headline">
+    <a href="/public/courses.html"      class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Courses</a>
+    <a href="/public/how-it-works.html" class="text-[#0A2540] hover:text-[#007BFF] transition-colors">Programs</a>
+    <a href="/public/about.html"        class="text-[#007BFF] border-b-2 border-[#007BFF] pb-1">About</a>
+    <a href="/public/faqs.html"         class="text-[#0A2540] hover:text-[#007BFF] transition-colors">FAQs</a>
+  </div>
+  <div id="nav-auth" class="flex items-center gap-3"></div>
+</nav>
+
+<main class="pt-20">
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden py-24 lg:py-32 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col lg:flex-row items-center gap-16">
+        <div class="lg:w-2/3 space-y-8">
+          <span class="inline-block px-4 py-1.5 rounded-full bg-[#d8e2ff] text-[#004493] headline font-bold text-sm tracking-widest uppercase">Empowering Khyber Pakhtunkhwa</span>
+          <h1 class="headline text-5xl lg:text-7xl font-bold text-[#000f22] tracking-tighter leading-tight">
+            Employable Digital Skills Initiative for the
+            <span class="text-[#0059bb]"> Youth of Khyber Pakhtunkhwa</span>
+          </h1>
+          <p class="text-xl text-[#43474d] max-w-2xl leading-relaxed">
+            Our mission is to foster digital excellence and economic independence by equipping the next generation of leaders with elite technical capabilities and global industry certifications.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <a href="/public/courses.html"   class="sig-grad text-white px-8 py-4 rounded-xl headline font-bold text-lg shadow-lg inline-block">View Learning Tracks</a>
+            <a href="/public/eligibility.html" class="px-8 py-4 rounded-xl headline font-bold text-lg border-2 border-[#c4c6ce] text-[#001c37] hover:bg-[#e5eeff] transition-colors inline-block">Check Eligibility</a>
+          </div>
+        </div>
+        <div class="lg:w-1/3 relative">
+          <div class="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-2xl rotate-3">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3bvF1TWdynZsxgqfMxXM_kj5zqW_1dUm_UwG-T794B4cxYenirt9GTqHEbAzYGAJP_pWptii4EVhSfH_Kap9zg4JouccobaeC5FHRMATUTvoRJ9o0xvjQ3tD0M3l7yhFv-E_QNK8Pzj1_MYuw5kZFcpBlMMXKnscLL4OiIC6xOlJH1bmvJQghMDs0x5UvvakJtHh6CKxTnQE_TvZNsxHEdtPe23YPmD5-7cjVB5yaa8qVyDn3rIohfhn4EiM4AZ-xfHaUK6MmD2w"
+              alt="Digital Technology" class="w-full h-full object-cover"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a2540]/80 to-transparent"></div>
+            <div class="absolute bottom-8 left-8 right-8 glass p-6 rounded-2xl">
+              <div class="text-[#009e76] headline font-bold text-3xl" id="stat-total">27,450+</div>
+              <div class="text-[#43474d] text-sm uppercase tracking-wider">Future Tech Leaders</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRATEGIC MILESTONES -->
+  <section class="bg-[#eff4ff] py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="headline text-4xl font-bold text-[#000f22]">Strategic Milestones</h2>
+        <p class="text-[#43474d] max-w-2xl mx-auto mt-3">Focused objectives designed to deliver measurable digital transformation across the province.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white p-10 rounded-[2rem] shadow-sm hover:-translate-y-2 transition-transform">
+          <div class="flex items-start justify-between mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-[#d8e2ff] flex items-center justify-center text-[#0059bb]">
+              <span class="material-symbols-outlined text-4xl">school</span>
+            </div>
+            <span class="headline font-bold text-[#0059bb]">3-Year Goal</span>
+          </div>
+          <h3 class="headline text-6xl font-black text-[#000f22] mb-4 tracking-tighter">27,450</h3>
+          <p class="headline text-xl font-bold mb-3">Youth Trained in Digital Skills</p>
+          <p class="text-[#43474d] leading-relaxed">Comprehensive development in foundational, advanced, and high-impact digital skills modules tailored for global market standards.</p>
+          <div class="mt-8 h-2 w-full bg-[#dce9ff] rounded-full overflow-hidden">
+            <div class="h-full sig-grad w-[45%]"></div>
+          </div>
+        </div>
+        <div class="bg-white p-10 rounded-[2rem] shadow-sm hover:-translate-y-2 transition-transform">
+          <div class="flex items-start justify-between mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-[#60fcc6]/30 flex items-center justify-center text-[#009e76]">
+              <span class="material-symbols-outlined text-4xl">verified_user</span>
+            </div>
+            <span class="headline font-bold text-[#009e76]">Elite Tier</span>
+          </div>
+          <h3 class="headline text-6xl font-black text-[#000f22] mb-4 tracking-tighter">2,888</h3>
+          <p class="headline text-xl font-bold mb-3">Global Certification Scholarships</p>
+          <p class="text-[#43474d] leading-relaxed">Providing top-tier graduates with fully-funded vouchers for internationally recognized credentials from Microsoft, AWS, and Google.</p>
+          <div class="mt-8 h-2 w-full bg-[#dce9ff] rounded-full overflow-hidden">
+            <div class="h-full bg-[#009e76] w-[30%]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BROADER IMPACT -->
+  <section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="headline text-4xl font-bold text-[#000f22] mb-4">Broader Ecosystem Impact</h2>
+      <p class="text-[#43474d] mb-16">Our vision extends beyond training — building a sustainable digital economy in KP.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="md:col-span-2 bg-[#eff4ff] p-8 rounded-3xl border border-[#c4c6ce]/15 hover:bg-[#dce9ff] transition-colors">
+          <span class="material-symbols-outlined text-[#0059bb] text-3xl mb-6 block">factory</span>
+          <h4 class="headline text-xl font-bold mb-3">Critical Mass of Talent</h4>
+          <p class="text-[#43474d]">Creating a substantial reservoir of skilled graduates ready to serve both local and foreign high-tech industries.</p>
+        </div>
+        <div class="bg-[#0a2540] p-8 rounded-3xl text-white">
+          <span class="material-symbols-outlined text-[#60fcc6] text-3xl mb-6 block">public</span>
+          <h4 class="headline text-xl font-bold mb-3">Global Tech Hub</h4>
+          <p class="text-[#768dad] text-sm">Positioning KP as a premier destination for a digitally skilled workforce on the world map.</p>
+        </div>
+        <div class="bg-[#eff4ff] p-8 rounded-3xl border border-[#c4c6ce]/15 hover:bg-[#dce9ff] transition-colors">
+          <span class="material-symbols-outlined text-[#0059bb] text-3xl mb-6 block">currency_exchange</span>
+          <h4 class="headline text-xl font-bold mb-3">High-Paying Roles</h4>
+          <p class="text-[#43474d]">Enabling ICT graduates to command premium rates in the global freelance economy.</p>
+        </div>
+        <div class="bg-[#eff4ff] p-8 rounded-3xl border border-[#c4c6ce]/15 hover:bg-[#dce9ff] transition-colors">
+          <span class="material-symbols-outlined text-[#0059bb] text-3xl mb-6 block">link</span>
+          <h4 class="headline text-xl font-bold mb-3">Bridge the Gap</h4>
+          <p class="text-[#43474d]">Closing the divide between university curricula and real-world industry requirements.</p>
+        </div>
+        <div class="md:col-span-2 bg-[#0059bb] text-white p-8 rounded-3xl">
+          <span class="material-symbols-outlined text-[#d8e2ff] text-3xl mb-6 block">female</span>
+          <h4 class="headline text-xl font-bold mb-3">Gender Inclusivity</h4>
+          <p class="text-[#d8e2ff] opacity-90">Empowering female graduates to thrive in the freelance economy and digital workspace through dedicated support channels.</p>
+        </div>
+        <div class="bg-[#eff4ff] p-8 rounded-3xl border border-[#c4c6ce]/15 hover:bg-[#dce9ff] transition-colors">
+          <span class="material-symbols-outlined text-[#0059bb] text-3xl mb-6 block">trending_up</span>
+          <h4 class="headline text-xl font-bold mb-3">Marketability</h4>
+          <p class="text-[#43474d]">Increasing the attractiveness of our graduates to domestic and international recruiters.</p>
+        </div>
+        <div class="bg-[#eff4ff] p-8 rounded-3xl border border-[#c4c6ce]/15 hover:bg-[#dce9ff] transition-colors">
+          <span class="material-symbols-outlined text-[#009e76] text-3xl mb-6 block">rocket_launch</span>
+          <h4 class="headline text-xl font-bold mb-3">Local Impact</h4>
+          <p class="text-[#43474d]">Directly increasing the employment ratio within the local ICT ecosystem of KP.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-24 px-6 mb-16">
+    <div class="max-w-5xl mx-auto sig-grad rounded-[3rem] p-12 lg:p-20 text-center relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+      <div class="relative z-10 space-y-8">
+        <h2 class="headline text-4xl lg:text-5xl font-bold text-white tracking-tight">Ready to transform your digital future?</h2>
+        <p class="text-white/80 text-lg max-w-2xl mx-auto">Applications for the next cohort of digital leaders are now open.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="/public/signup.html"    class="bg-white text-[#0059bb] px-10 py-4 rounded-xl headline font-bold text-lg hover:bg-[#d8e2ff] transition-colors inline-block">Apply Now</a>
+          <a href="/public/contact.html"   class="bg-[#0a2540] text-white px-10 py-4 rounded-xl headline font-bold text-lg inline-block">Contact Admissions</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-[#0A2540] text-white w-full py-12 px-8 border-t border-white/10">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div><p class="headline font-bold text-lg mb-3">The Neon Academy</p><p class="text-slate-400 text-sm leading-relaxed">Pioneering the next generation of digital infrastructure through elite skill acquisition.</p></div>
+    <div><h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Navigation</h4>
+      <ul class="space-y-3 text-sm text-slate-400">
+        <li><a href="/public/courses.html"      class="hover:text-[#009e76] transition-colors">Courses</a></li>
+        <li><a href="/public/how-it-works.html" class="hover:text-[#009e76] transition-colors">How It Works</a></li>
+        <li><a href="/public/about.html"        class="hover:text-[#009e76] transition-colors">About Us</a></li>
+        <li><a href="/public/contact.html"      class="hover:text-[#009e76] transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div><h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Legal</h4>
+      <ul class="space-y-3 text-sm text-slate-400">
+        <li><a href="#" class="hover:text-[#009e76] transition-colors">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-[#009e76] transition-colors">Terms of Service</a></li>
+        <li><a href="/public/faqs.html" class="hover:text-[#009e76] transition-colors">FAQs</a></li>
+      </ul>
+    </div>
+    <div><h4 class="headline font-bold text-xs uppercase tracking-widest text-slate-500 mb-4">Connect</h4>
+      <p class="text-slate-400 text-sm">info@kpitb.gov.pk</p><p class="text-slate-400 text-xs mt-2">091-9219505-8</p>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+    <p class="text-slate-400 text-sm">© 2024 The Neon Academy. Government Digital Initiative.</p>
+    <p class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">Secure Portal v2.4</p>
+  </div>
+</footer>
+
+<script>
+setupNav();
+// Load live stats
+async function loadStats() {
+  const [{ count: students }, { count: courses }] = await Promise.all([
+    sb.from("profiles").select("*", { count:"exact", head:true }),
+    sb.from("courses").select("*", { count:"exact", head:true }).eq("is_published", true),
+  ]);
+  if (students) document.getElementById("stat-total").textContent = students.toLocaleString() + "+";
+}
+loadStats();
+</script>
+</body>
+</html>
